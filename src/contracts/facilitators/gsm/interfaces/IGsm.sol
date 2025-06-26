@@ -321,7 +321,7 @@ interface IGsm is IAccessControl, IGhoFacilitator {
    * @notice Returns the amount of GHO used by the GSM
    * @return The amount of GHO used
    */
-  function getUsedGho() external view returns (uint256);
+  function getUsed() external view returns (uint256);
 
   /**
    * @notice Returns the maximum amount of GHO that can be used

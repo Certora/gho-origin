@@ -743,7 +743,7 @@ contract TestGsm is TestGhoBase {
     emit BuyAsset(ALICE, ALICE, 1e6, 1e18, 0);
     GHO_GSM.buyAsset(1e6, ALICE);
 
-    uint256 usedGho = GHO_GSM.getUsedGho();
+    uint256 usedGho = GHO_GSM.getUsed();
     assertEq(usedGho, DEFAULT_CAPACITY - 1e18, 'Unexpected GHO bucket level after buy');
     assertEq(
       GHO_TOKEN.balanceOf(ALICE),
@@ -759,7 +759,7 @@ contract TestGsm is TestGhoBase {
     GHO_GSM.sellAsset(1e6, ALICE);
     vm.stopPrank();
 
-    usedGho = GHO_GSM.getUsedGho();
+    usedGho = GHO_GSM.getUsed();
     assertEq(usedGho, DEFAULT_CAPACITY, 'Unexpected GHO bucket level after second sell');
     assertEq(
       GHO_TOKEN.balanceOf(ALICE),
@@ -1332,7 +1332,7 @@ contract TestGsm is TestGhoBase {
     uint256 seizedAmount = GHO_GSM.seize();
     assertEq(seizedAmount, DEFAULT_GSM_USDX_AMOUNT, 'Unexpected seized amount');
 
-    uint256 usedGho = GHO_GSM.getUsedGho();
+    uint256 usedGho = GHO_GSM.getUsed();
     assertTrue(usedGho > 0, 'Unexpected usedGho amount');
 
     vm.expectRevert('FACILITATOR_BUCKET_LEVEL_NOT_ZERO');
@@ -1346,7 +1346,7 @@ contract TestGsm is TestGhoBase {
     uint256 burnedAmount = GHO_GSM.burnAfterSeize(DEFAULT_GSM_GHO_AMOUNT);
     vm.stopPrank();
     assertEq(burnedAmount, DEFAULT_GSM_GHO_AMOUNT, 'Unexpected burned amount of GHO');
-    assertEq(GHO_GSM.getUsedGho(), 0, 'Unexpected amount of used GHO');
+    assertEq(GHO_GSM.getUsed(), 0, 'Unexpected amount of used GHO');
   }
 
   function testBurnAfterSeizeGreaterAmount() public {

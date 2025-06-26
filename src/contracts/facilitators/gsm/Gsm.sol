@@ -232,7 +232,7 @@ contract Gsm is AccessControl, VersionedInitializable, EIP712, IGsm {
       IERC20(UNDERLYING_ASSET).safeTransfer(_ghoTreasury, underlyingBalance);
     }
 
-    emit Seized(msg.sender, _ghoTreasury, underlyingBalance, _getUsedGho());
+    emit Seized(msg.sender, _ghoTreasury, underlyingBalance, _getUsed());
     return underlyingBalance;
   }
 
@@ -241,7 +241,7 @@ contract Gsm is AccessControl, VersionedInitializable, EIP712, IGsm {
     require(_isSeized, 'GSM_NOT_SEIZED');
     require(amount > 0, 'INVALID_AMOUNT');
 
-    uint256 usedGho = _getUsedGho();
+    uint256 usedGho = _getUsed();
     if (amount > usedGho) {
       amount = usedGho;
     }
@@ -379,8 +379,8 @@ contract Gsm is AccessControl, VersionedInitializable, EIP712, IGsm {
   }
 
   /// @inheritdoc IGsm
-  function getUsedGho() external view returns (uint256) {
-    return _getUsedGho();
+  function getUsed() external view returns (uint256) {
+    return _getUsed();
   }
 
   /// @inheritdoc IGsm
@@ -554,6 +554,14 @@ contract Gsm is AccessControl, VersionedInitializable, EIP712, IGsm {
   }
 
   /**
+   * @dev Returns the amount of GHO currently used.
+   * @return The amount of GHO used
+   */
+  function _getUsed() internal view returns (uint256) {
+    return IGhoReserve(_ghoReserve).getUsed(address(this));
+  }
+
+  /**
    * @dev Returns the maximum amount of GHO that can be used.
    * @return The usage limit of GHO
    */
@@ -568,14 +576,6 @@ contract Gsm is AccessControl, VersionedInitializable, EIP712, IGsm {
    */
   function _getUsage() internal view returns (uint256, uint256) {
     return IGhoReserve(_ghoReserve).getUsage(address(this));
-  }
-
-  /**
-   * @dev Returns the amount of GHO currently used.
-   * @return The amount of GHO used
-   */
-  function _getUsedGho() internal view returns (uint256) {
-    return IGhoReserve(_ghoReserve).getUsed(address(this));
   }
 
   /**

@@ -21,7 +21,7 @@ contract TestGsmSwapEdge is TestGhoBase {
     Gsm gsm = new Gsm(address(GHO_TOKEN), address(newToken), address(newPriceStrategy));
     gsm.initialize(address(this), TREASURY, type(uint128).max, address(GHO_RESERVE));
     GHO_RESERVE.addEntity(address(gsm));
-    GHO_RESERVE.setLimit(address(gsm), type(uint256).max);
+    GHO_RESERVE.setLimit(address(gsm), type(uint128).max);
 
     // Sell 2 assets for 2e11 GHO
     vm.prank(FAUCET);
@@ -37,7 +37,7 @@ contract TestGsmSwapEdge is TestGhoBase {
     ghoFaucet(ALICE, estGhoBought * 20);
 
     vm.startPrank(ALICE);
-    GHO_TOKEN.approve(address(gsm), type(uint256).max);
+    GHO_TOKEN.approve(address(gsm), type(uint128).max);
 
     // Try to buy all, which is 2 assets for 2e11+1 GHO
     uint256 allUnderlying = gsm.getAvailableLiquidity();

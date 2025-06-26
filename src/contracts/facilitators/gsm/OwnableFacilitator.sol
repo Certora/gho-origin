@@ -2,8 +2,8 @@
 pragma solidity ^0.8.10;
 
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
-import {IOwnableFacilitator} from 'src/contracts/facilitators/gsm/interfaces/IOwnableFacilitator.sol';
 import {IGhoToken} from 'src/contracts/gho/interfaces/IGhoToken.sol';
+import {IOwnableFacilitator} from 'src/contracts/facilitators/gsm/interfaces/IOwnableFacilitator.sol';
 
 /**
  * @title OwnableFacilitator

@@ -44,7 +44,7 @@ contract Gsm4626 is Gsm, IGsm4626 {
   ) external notSeized onlyRole(CONFIGURATOR_ROLE) returns (uint256) {
     require(amount > 0, 'INVALID_AMOUNT');
 
-    uint256 usedGho = _getUsedGho();
+    uint256 usedGho = _getUsed();
     (, uint256 deficit) = _getCurrentBacking(usedGho);
     require(deficit > 0, 'NO_CURRENT_DEFICIT_BACKING');
 
@@ -63,7 +63,7 @@ contract Gsm4626 is Gsm, IGsm4626 {
   ) external notSeized onlyRole(CONFIGURATOR_ROLE) returns (uint256) {
     require(amount > 0, 'INVALID_AMOUNT');
 
-    (, uint256 deficit) = _getCurrentBacking(_getUsedGho());
+    (, uint256 deficit) = _getCurrentBacking(_getUsed());
     require(deficit > 0, 'NO_CURRENT_DEFICIT_BACKING');
 
     uint128 deficitInUnderlying = IGsmPriceStrategy(PRICE_STRATEGY)
@@ -95,7 +95,7 @@ contract Gsm4626 is Gsm, IGsm4626 {
 
   /// @inheritdoc IGsm4626
   function getCurrentBacking() external view returns (uint256, uint256) {
-    return _getCurrentBacking(_getUsedGho());
+    return _getCurrentBacking(_getUsed());
   }
 
   /// @inheritdoc IGhoFacilitator

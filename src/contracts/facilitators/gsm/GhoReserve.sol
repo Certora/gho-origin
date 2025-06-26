@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import {IERC20} from 'aave-v3-origin/contracts/dependencies/openzeppelin/contracts/IERC20.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
+import {SafeCast} from 'src/contracts/dependencies/openzeppelin-contracts/contracts/utils/math/SafeCast.sol';
+import {IERC20} from 'aave-v3-origin/contracts/dependencies/openzeppelin/contracts/IERC20.sol';
 import {VersionedInitializable} from 'aave-v3-origin/contracts/misc/aave-upgradeability/VersionedInitializable.sol';
 import {IGhoReserve} from 'src/contracts/facilitators/gsm/interfaces/IGhoReserve.sol';
 
@@ -15,6 +16,7 @@ import {IGhoReserve} from 'src/contracts/facilitators/gsm/interfaces/IGhoReserve
  */
 contract GhoReserve is Ownable, VersionedInitializable, IGhoReserve {
   using EnumerableSet for EnumerableSet.AddressSet;
+  using SafeCast for uint256;
 
   /// @inheritdoc IGhoReserve
   address public immutable GHO_TOKEN;
@@ -48,14 +50,14 @@ contract GhoReserve is Ownable, VersionedInitializable, IGhoReserve {
     GhoUsage storage entity = _ghoUsage[msg.sender];
     require(entity.limit >= entity.used + amount, 'LIMIT_EXCEEDED');
 
-    entity.used += uint128(amount);
+    entity.used += amount.toUint128();
     IERC20(GHO_TOKEN).transfer(msg.sender, amount);
     emit GhoUsed(msg.sender, amount);
   }
 
   /// @inheritdoc IGhoReserve
   function restore(uint256 amount) external {
-    _ghoUsage[msg.sender].used -= uint128(amount);
+    _ghoUsage[msg.sender].used -= amount.toUint128();
     IERC20(GHO_TOKEN).transferFrom(msg.sender, address(this), amount);
     emit GhoRestored(msg.sender, amount);
   }
@@ -83,7 +85,7 @@ contract GhoReserve is Ownable, VersionedInitializable, IGhoReserve {
   /// @inheritdoc IGhoReserve
   function setLimit(address entity, uint256 limit) external onlyOwner {
     require(_entities.contains(entity), 'ENTITY_DOES_NOT_EXIST');
-    _ghoUsage[entity].limit = uint128(limit);
+    _ghoUsage[entity].limit = limit.toUint128();
 
     emit GhoLimitUpdated(entity, limit);
   }

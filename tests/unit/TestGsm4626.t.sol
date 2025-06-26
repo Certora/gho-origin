@@ -392,7 +392,7 @@ contract TestGsm4626 is TestGhoBase {
     emit SellAsset(ALICE, ALICE, DEFAULT_GSM_USDX_EXPOSURE, DEFAULT_CAPACITY, 0);
     GHO_GSM_4626.sellAsset(DEFAULT_GSM_USDX_EXPOSURE, ALICE);
 
-    uint256 usedGho = GHO_GSM_4626.getUsedGho();
+    uint256 usedGho = GHO_GSM_4626.getUsed();
     uint256 ghoLimit = GHO_RESERVE.getLimit(address(GHO_GSM_4626));
     assertEq(usedGho, ghoLimit, 'Unexpected GHO bucket level after initial sell');
     assertEq(
@@ -407,7 +407,7 @@ contract TestGsm4626 is TestGhoBase {
     emit BuyAsset(ALICE, ALICE, 1e6, 1e18, 0);
     GHO_GSM_4626.buyAsset(1e6, ALICE);
 
-    usedGho = GHO_GSM_4626.getUsedGho();
+    usedGho = GHO_GSM_4626.getUsed();
     assertEq(usedGho, DEFAULT_CAPACITY - 1e18, 'Unexpected GHO bucket level after buy');
     assertEq(
       GHO_TOKEN.balanceOf(ALICE),
@@ -423,7 +423,7 @@ contract TestGsm4626 is TestGhoBase {
     GHO_GSM_4626.sellAsset(1e6, ALICE);
     vm.stopPrank();
 
-    usedGho = GHO_GSM_4626.getUsedGho();
+    usedGho = GHO_GSM_4626.getUsed();
     ghoLimit = GHO_RESERVE.getLimit(address(GHO_GSM_4626));
     assertEq(usedGho, ghoLimit, 'Unexpected GHO bucket level after second sell');
     assertEq(
@@ -934,7 +934,7 @@ contract TestGsm4626 is TestGhoBase {
     uint256 burnedAmount = GHO_GSM_4626.burnAfterSeize(DEFAULT_GSM_GHO_AMOUNT);
     vm.stopPrank();
     assertEq(burnedAmount, DEFAULT_GSM_GHO_AMOUNT, 'Unexpected burned amount of GHO');
-    assertEq(GHO_GSM_4626.getUsedGho(), 0, 'Unexpected leftover amount of GHO');
+    assertEq(GHO_GSM_4626.getUsed(), 0, 'Unexpected leftover amount of GHO');
   }
 
   function testBurnAfterSeizeGreaterAmount() public {
@@ -948,7 +948,7 @@ contract TestGsm4626 is TestGhoBase {
     uint256 seizedAmount = GHO_GSM_4626.seize();
     assertEq(seizedAmount, DEFAULT_GSM_USDX_AMOUNT, 'Unexpected seized amount');
 
-    uint256 usedGho = GHO_GSM_4626.getUsedGho();
+    uint256 usedGho = GHO_GSM_4626.getUsed();
     assertTrue(usedGho > 0, 'Unexpected usedGho amount');
 
     vm.expectRevert('FACILITATOR_BUCKET_LEVEL_NOT_ZERO');
@@ -1043,12 +1043,12 @@ contract TestGsm4626 is TestGhoBase {
     GHO_TOKEN.approve(address(GHO_GSM_4626), type(uint256).max);
 
     uint256 balanceBefore = GHO_TOKEN.balanceOf(address(this));
-    uint256 usedGhoBefore = GHO_GSM_4626.getUsedGho();
+    uint256 usedGhoBefore = GHO_GSM_4626.getUsed();
 
     uint256 ghoUsedForBacking = GHO_GSM_4626.backWithGho((DEFAULT_GSM_GHO_AMOUNT / 2) + 1);
 
     uint256 balanceAfter = GHO_TOKEN.balanceOf(address(this));
-    uint256 usedGhoAfter = GHO_GSM_4626.getUsedGho();
+    uint256 usedGhoAfter = GHO_GSM_4626.getUsed();
 
     assertEq(DEFAULT_GSM_GHO_AMOUNT / 2, ghoUsedForBacking);
     assertEq(balanceBefore - balanceAfter, ghoUsedForBacking);

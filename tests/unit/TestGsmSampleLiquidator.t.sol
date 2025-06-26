@@ -39,7 +39,7 @@ contract TestGsmSampleLiquidator is TestGhoBase {
     assertEq(seizedAmount, DEFAULT_GSM_USDX_AMOUNT, 'Unexpected seize amount returned');
 
     // Mint the current bucket level
-    uint256 bucketLevel = GHO_GSM.getUsedGho();
+    uint256 bucketLevel = GHO_GSM.getUsed();
     assertGt(bucketLevel, 0, 'Unexpected 0 minted GHO');
     ghoFaucet(address(this), bucketLevel);
 
@@ -67,7 +67,7 @@ contract TestGsmSampleLiquidator is TestGhoBase {
     assertEq(seizedAmount, DEFAULT_GSM_USDX_AMOUNT, 'Unexpected seize amount returned');
 
     // Mint the current bucket level + 1, to have more GHO than necessary
-    uint256 bucketLevel = GHO_GSM.getUsedGho();
+    uint256 bucketLevel = GHO_GSM.getUsed();
     assertGt(bucketLevel, 0, 'Unexpected 0 minted GHO');
     ghoFaucet(address(this), bucketLevel + 1);
 

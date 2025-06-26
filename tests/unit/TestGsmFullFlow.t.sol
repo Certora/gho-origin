@@ -51,7 +51,7 @@ contract TestGsmFullFlow is TestGhoBase {
     assertEq(USDX_TOKEN.balanceOf(ALICE), 0, 'Unexpected final USDX balance');
     assertEq(GHO_TOKEN.balanceOf(ALICE), DEFAULT_GSM_GHO_AMOUNT, 'Unexpected final GHO balance');
     assertEq(gsm.getExposureCap(), DEFAULT_GSM_USDX_EXPOSURE, 'Unexpected exposure capacity');
-    assertEq(ghoBought, gsm.getUsedGho(), 'Unexpected amount of used GHO');
+    assertEq(ghoBought, gsm.getUsed(), 'Unexpected amount of used GHO');
 
     (uint256 limit, uint256 used) = reserve.getUsage(address(gsm));
 
@@ -75,7 +75,7 @@ contract TestGsmFullFlow is TestGhoBase {
     assertEq(USDX_TOKEN.balanceOf(BOB), DEFAULT_GSM_USDX_AMOUNT, 'Unexpected final USDX balance');
     assertEq(GHO_TOKEN.balanceOf(ALICE), DEFAULT_GSM_GHO_AMOUNT, 'Unexpected final GHO balance');
     assertEq(gsm.getExposureCap(), DEFAULT_GSM_USDX_EXPOSURE, 'Unexpected exposure capacity');
-    assertEq(0, gsm.getUsedGho(), 'Unexpected amount of used GHO');
+    assertEq(0, gsm.getUsed(), 'Unexpected amount of used GHO');
 
     (limit, used) = reserve.getUsage(address(gsm));
 

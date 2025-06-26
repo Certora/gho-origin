@@ -29,7 +29,7 @@ contract SampleLiquidator is Ownable {
    */
   function triggerBurnAfterSeize(address gsm, uint256 amount) external onlyOwner returns (uint256) {
     IERC20 ghoToken = IERC20(IGsm(gsm).GHO_TOKEN());
-    uint256 usedGho = IGsm(gsm).getUsedGho();
+    uint256 usedGho = IGsm(gsm).getUsed();
     if (amount > usedGho) {
       amount = usedGho;
     }
