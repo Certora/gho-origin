@@ -86,10 +86,10 @@ rule byuFeeAndInverse0()
 	feeLimits(e);
 	uint amount;
 	uint buyFee = getBuyFee(amount);
-	mathint sum = amount + buyFee;
-	require sum < max_uint256;
+	mathint summ = amount + buyFee;
+	require summ < max_uint256;
 
-	uint amount2 = getGrossAmountFromTotalBought(assert_uint256(sum));
+	uint amount2 = getGrossAmountFromTotalBought(assert_uint256(summ));
 
 	//assert differsByAtMostOne(amount, amount2);
 	assert amount == amount2;
@@ -104,10 +104,10 @@ rule byuFeeAndInverse1()
 	feeLimits(e);
 	uint amount;
 	uint buyFee = getBuyFee(amount);
-	mathint sum = amount + buyFee;
-	require sum < max_uint256;
+	mathint summ = amount + buyFee;
+	require summ < max_uint256;
 
-	uint amount2 = getGrossAmountFromTotalBought(assert_uint256(sum));
+	uint amount2 = getGrossAmountFromTotalBought(assert_uint256(summ));
 
 	assert differsByAtMostOne(amount, amount2);
 	//assert amount == amount2;
