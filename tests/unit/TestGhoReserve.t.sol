@@ -58,6 +58,22 @@ contract TestGhoReserve is TestGhoBase {
     assertEq(limit - used, capacity / 2);
   }
 
+  function testUseOverflowUnreachable() public {
+    address newEntity = makeAddr('new-entity');
+    GHO_RESERVE.addEntity(address(newEntity));
+
+    uint256 value = type(uint128).max;
+
+    vm.expectRevert("SafeCast: value doesn't fit in 128 bits");
+    GHO_RESERVE.setLimit(newEntity, value + 1);
+
+    GHO_RESERVE.setLimit(newEntity, value);
+
+    vm.expectRevert("LIMIT_EXCEEDED");
+    vm.prank(newEntity);
+    GHO_RESERVE.use(value + 1);
+  }
+
   function testRevertRestoreNoWithdrawnAmount() public {
     GHO_RESERVE.addEntity(address(this));
     GHO_RESERVE.setLimit(address(this), 10_000 ether);
@@ -93,6 +109,18 @@ contract TestGhoReserve is TestGhoBase {
 
     assertEq(GHO_RESERVE.getUsed(address(this)), capacity / 4);
     assertEq(limit - used, capacity - repayAmount);
+  }
+
+  function testRestoreOverflow() public {
+    address newEntity = makeAddr('new-entity');
+    GHO_RESERVE.addEntity(address(newEntity));
+
+    uint256 value = type(uint128).max;
+    GHO_RESERVE.setLimit(newEntity, value);
+
+    vm.expectRevert("SafeCast: value doesn't fit in 128 bits");
+    vm.prank(newEntity);
+    GHO_RESERVE.restore(value + 1);
   }
 
   function testAddEntity() public {
@@ -174,6 +202,15 @@ contract TestGhoReserve is TestGhoBase {
   function testSetLimitEntityDoesNotExist() public {
     vm.expectRevert('ENTITY_DOES_NOT_EXIST');
     GHO_RESERVE.setLimit(makeAddr('no-entity'), 100_000 ether);
+  }
+
+  function testSetLimitOverflow() public {
+    address newEntity = makeAddr('new-entity');
+    GHO_RESERVE.addEntity(address(newEntity));
+
+    uint256 value = type(uint128).max;
+    vm.expectRevert("SafeCast: value doesn't fit in 128 bits");
+    GHO_RESERVE.setLimit(newEntity, value + 1);
   }
 
   function testTransfer() public {
