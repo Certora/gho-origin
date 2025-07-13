@@ -6,9 +6,9 @@ certoraRun $CMN certora/gsm/conf/gsm/gho-gsm_inverse.conf \
            --msg "1. "
 
 echo
-echo "******** 2. Running:    ****************"
+echo "******** 2. Running: gsm/gho-gsm.conf   ****************"
 certoraRun $CMN certora/gsm/conf/gsm/gho-gsm.conf \
-           --msg "2. "
+           --msg "2. gsm/gho-gsm.conf"
 
 echo
 echo "******** 3. Running:    ****************"
