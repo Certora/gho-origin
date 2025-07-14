@@ -37,6 +37,7 @@ contract TestGhoReserve is TestGhoBase {
   }
 
   function testRevertUseNoCapacity() public {
+    GHO_RESERVE.addEntity(address(this));
     vm.expectRevert('LIMIT_EXCEEDED');
     GHO_RESERVE.use(100 ether);
   }
@@ -72,6 +73,11 @@ contract TestGhoReserve is TestGhoBase {
     vm.expectRevert("LIMIT_EXCEEDED");
     vm.prank(newEntity);
     GHO_RESERVE.use(value + 1);
+  }
+
+  function testUseNotEntity() public {
+    vm.expectRevert("NOT_ENTITY");
+    GHO_RESERVE.use(1_000 ether);
   }
 
   function testRevertRestoreNoWithdrawnAmount() public {
@@ -123,6 +129,11 @@ contract TestGhoReserve is TestGhoBase {
     GHO_RESERVE.restore(value + 1);
   }
 
+  function testRestoreNotEntity() public {
+    vm.expectRevert("NOT_ENTITY");
+    GHO_RESERVE.use(1_000 ether);
+  }
+
   function testAddEntity() public {
     address alice = makeAddr('alice');
     vm.expectEmit(true, true, true, true, address(GHO_RESERVE));
@@ -149,18 +160,22 @@ contract TestGhoReserve is TestGhoBase {
   }
 
   function testRemoveEntity() public {
+    uint256 limit =  1_000_000 ether;
     address alice = makeAddr('alice');
     vm.expectEmit(true, true, true, true, address(GHO_RESERVE));
     emit EntityAdded(alice);
-    GHO_RESERVE.addEntity(address(alice));
+    GHO_RESERVE.addEntity(alice);
+    GHO_RESERVE.setLimit(alice, limit);
 
     assertTrue(GHO_RESERVE.isEntity(alice));
+    assertEq(GHO_RESERVE.getLimit(alice), limit);
 
     vm.expectEmit(true, true, true, true, address(GHO_RESERVE));
     emit EntityRemoved(alice);
-    GHO_RESERVE.removeEntity(address(alice));
+    GHO_RESERVE.removeEntity(alice);
 
     assertFalse(GHO_RESERVE.isEntity(alice));
+    assertEq(GHO_RESERVE.getLimit(alice), 0);
   }
 
   function testRemoveEntityNotInSet() public {
