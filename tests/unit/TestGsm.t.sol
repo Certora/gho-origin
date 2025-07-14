@@ -374,7 +374,7 @@ contract TestGsm is TestGhoBase {
       address(GHO_GSM_FIXED_PRICE_STRATEGY)
     );
     gsm.initialize(address(this), TREASURY, DEFAULT_GSM_USDX_EXPOSURE, address(GHO_RESERVE));
-    GHO_TOKEN.addFacilitator(address(gsm), 'GSM Modified Bucket Cap', DEFAULT_CAPACITY - 1);
+    GHO_RESERVE.addEntity(address(gsm));
     uint256 defaultCapInUsdx = DEFAULT_CAPACITY / (10 ** (18 - USDX_TOKEN.decimals()));
 
     vm.prank(FAUCET);
