@@ -170,6 +170,9 @@ contract TestGhoReserve is TestGhoBase {
     assertTrue(GHO_RESERVE.isEntity(alice));
     assertEq(GHO_RESERVE.getLimit(alice), limit);
 
+    GHO_RESERVE.setLimit(alice, 0);
+    assertEq(GHO_RESERVE.getLimit(alice), 0);
+
     vm.expectEmit(true, true, true, true, address(GHO_RESERVE));
     emit EntityRemoved(alice);
     GHO_RESERVE.removeEntity(alice);
@@ -201,6 +204,16 @@ contract TestGhoReserve is TestGhoBase {
     GHO_RESERVE.use(5_000 ether);
 
     vm.expectRevert('ENTITY_GHO_USED_NOT_ZERO');
+    GHO_RESERVE.removeEntity(alice);
+  }
+
+  function testRevertRemoveEntityLimitNotZero() public {
+    address alice = makeAddr('alice');
+    uint256 capacity = 100_000 ether;
+    GHO_RESERVE.addEntity(address(alice));
+    GHO_RESERVE.setLimit(alice, capacity);
+
+    vm.expectRevert('ENTITY_GHO_LIMIT_NOT_ZERO');
     GHO_RESERVE.removeEntity(alice);
   }
 
