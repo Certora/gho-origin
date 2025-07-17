@@ -76,7 +76,7 @@ contract TestGhoReserve is TestGhoBase {
   }
 
   function testUseNotEntity() public {
-    vm.expectRevert("NOT_ENTITY");
+    vm.expectRevert("LIMIT_EXCEEDED");
     GHO_RESERVE.use(1_000 ether);
   }
 
@@ -130,7 +130,7 @@ contract TestGhoReserve is TestGhoBase {
   }
 
   function testRestoreNotEntity() public {
-    vm.expectRevert("NOT_ENTITY");
+    vm.expectRevert("LIMIT_EXCEEDED");
     GHO_RESERVE.use(1_000 ether);
   }
 
