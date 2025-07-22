@@ -4,6 +4,7 @@ import "../GsmMethods/aave_price_fee_limits.spec";
 import "../GsmMethods/erc4626.spec";
 
 using DiffHelper as diffHelper;
+using GhoReserve as _ghoReserve;
 
 methods {
     function distributeFeesToTreasury() external;
@@ -89,6 +90,8 @@ rule R2_getAssetAmountForBuyAssetRV_vs_GhoBalance {
     priceLimits(e);
 
     require e.msg.sender != currentContract; // Otherwise the fee in GHO will come back to me, messing up the balance calculation
+    require e.msg.sender != _ghoReserve;
+    require e.msg.sender != 0;
     require GHO_TOKEN(e) != UNDERLYING_ASSET(e); // This is inflation prevention (and also avoids an overflow)
 
     uint256 ghoWithFee;

@@ -50,7 +50,7 @@ jobs:
       matrix:
         rule:
           - gho-gsm_4626_inverse.conf --rule buySellInverse27 buySellInverse26 buySellInverse25 buySellInverse24 buySellInverse23 buySellInverse22 buySellInverse21 buySellInverse20 buySellInverse19
-          - gho-gsm4626.conf --rule enoughULtoBackGhoNonBuySell NonZeroFeeCheckSellAsset NonZeroFeeCheckBuyAsset
+          - gho-gsm4626.conf
           - balances-buy-4626.conf
           - balances-sell-4626.conf --rule R1_getAssetAmountForSellAsset_arg_vs_return R1a_buyGhoUpdatesGhoBalanceCorrectly1 R2_getAssetAmountForSellAsset_sellAsset_eq
           - balances-sell-4626.conf --rule R3a_sellAssetUpdatesAssetBalanceCorrectly

@@ -4,6 +4,7 @@ import "../GsmMethods/aave_price_fee_limits.spec";
 import "../GsmMethods/erc4626.spec";
 
 using DiffHelper as diffHelper;
+using GhoReserve as _ghoReserve;
 
 methods {
     function distributeFeesToTreasury() external;
@@ -70,6 +71,7 @@ rule R2_getAssetAmountForSellAsset_sellAsset_eq {
 
     address recipient;
     require recipient != currentContract; // Otherwise the balance grows because of the fees.
+    require recipient != _ghoReserve;
 
     assetsToSell, ghoToReceive, _, _ = getAssetAmountForSellAsset(e, minGhoToReceive);
 
@@ -146,6 +148,7 @@ rule R4_buyGhoUpdatesGhoBalanceCorrectly {
     address seller = e.msg.sender;
     address recipient;
     require recipient != currentContract; // Otherwise the balance grows because of the fees.
+    require recipient != _ghoReserve;
 
     uint256 minGhoToSend;
     uint256 assetsToSpend;

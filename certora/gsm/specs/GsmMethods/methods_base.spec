@@ -4,6 +4,7 @@ using FixedPriceStrategyHarness as _priceStrategy;
 using FixedFeeStrategyHarness as _FixedFeeStrategy;
 using GhoToken as _ghoToken;
 using ERC20Helper as erc20Helper;
+using GhoReserve as _ghoReserve;
 
 /////////////////// Methods ////////////////////////
 
@@ -23,7 +24,6 @@ methods
     function _.UNDERLYING_ASSET() external  => DISPATCHER(true);
 
     // priceStrategy
-
     function _priceStrategy.getAssetPriceInGho(uint256, bool roundUp) external returns(uint256) envfree;
     function _priceStrategy.getUnderlyingAssetUnits() external returns(uint256) envfree;
     function _priceStrategy.PRICE_RATIO() external returns(uint256) envfree;
@@ -31,17 +31,20 @@ methods
 
 
     // feeStrategy
-    
     function _FixedFeeStrategy.getBuyFeeBP() external returns(uint256) envfree;
     function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
     function _FixedFeeStrategy.getBuyFee(uint256) external returns(uint256) envfree;
     function _FixedFeeStrategy.getSellFee(uint256) external returns(uint256) envfree;
     
     // GhoToken
-
     function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
     function _ghoToken.balanceOf(address) external returns (uint256) envfree;
 
+    // GhoReserve
+    function _ghoReserve.getUsage(address entity) external returns (uint256, uint256) envfree;
+
+
+    
     // Harness
     function getGhoMinted() external returns(uint256) envfree;
     function getPriceRatio() external returns (uint256) envfree;
@@ -82,9 +85,11 @@ definition buySellAssetsFunctions(method f) returns bool =
         f.selector == sig:sellAssetWithSig(address,uint256,address,uint256,bytes).selector);
 
 function basicBuySellSetup( env e, address receiver){
-    require receiver != currentContract;
-    require e.msg.sender != currentContract;
-    require UNDERLYING_ASSET(e) != _ghoToken;
+  require receiver != currentContract;
+  require receiver != _ghoReserve;
+  require e.msg.sender != currentContract;
+  require UNDERLYING_ASSET(e) != _ghoToken;
+  require UNDERLYING_ASSET(e) != _ghoReserve;
 }
 
 function erc20_transferFrom_assumption(address token, env e, address from, address to, uint256 amount) returns bool {

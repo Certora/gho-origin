@@ -3,106 +3,27 @@ import "../GsmMethods/methods_divint_summary.spec";
 import "../GsmMethods/aave_price_fee_limits.spec";
 import "../GsmMethods/erc4626.spec";
 
-// @title solvency rule - buyAsset Function
-// STATUS: VIOLATED
-// https://prover.certora.com/output/11775/0b04906c237b4a1e8ac5b7ffc1e9f449?anonymousKey=cf620b132aaadb33116c93025269fbbe5258070c
-
-// rule enoughULtoBackGhoBuyAsset()
-// {
-// 	uint256 _currentExposure = getAvailableLiquidity();
-// 	uint256 _ghoMinted = getGhoMinted();
-// 	uint256 _underlyingAssetUnits = _priceStrategy.getUnderlyingAssetUnits(); 
-// 	uint8 underlyingAssetDecimals;
-// 	// require underlyingAssetDecimals == 18;
-// 	require to_mathint(_underlyingAssetUnits) == 10^underlyingAssetDecimals;
-
-// 	// uint256 priceRatio = _priceStrategy.PRICE_RATIO();
-// 	// require priceRatio >= 10^16 && priceRatio <= 10^20;
-// 	// uint256 buyFeeBP = getBuyFeeBP();
-// 	// require buyFeeBP == 4000;
-// 	// rounding up for over-approximation
-//     uint256 _ghoBacked = _priceStrategy.getAssetPriceInGho(_currentExposure, true);
-//     require _ghoBacked >= _ghoMinted;
-// 	env e;
-// 	feeLimits(e);
-// 	priceLimits(e);
-
-// 	uint256 amount;
-// 	address receiver;
-	
-// 	buyAsset(e, amount, receiver);
-
-// 	uint256 ghoMinted_ = getGhoMinted();
-// 	uint256 currentExposure_ = getAvailableLiquidity();
-	
-// 	// rounding down for over-approximation
-//     uint256 ghoBacked_ = _priceStrategy.getAssetPriceInGho(currentExposure_, false);
-    
-//     assert to_mathint(ghoBacked_+1)>= to_mathint(ghoMinted_)
-//     ,"not enough currentExposure to back the ghoMinted";
-// }
-
-// @title solvency rule - sellAsset function
-// STATUS: TIMEOUT
-// https://prover.certora.com/output/11775/bfafe4ddbb6947a8ae86635dd14a6eb8?anonymousKey=4e0a75d10aaadeba18ea4d3a9ecfcfdb0c1f2188
-// rule enoughUnderlyingToBackGhoRuleSellAsset()
-// {
-// 	uint256 _currentExposure = getAvailableLiquidity();
-// 	uint256 _ghoMinted = getGhoMinted();
-// 	// uint256 _underlyingAssetUnits = _priceStrategy.getUnderlyingAssetUnits(); 
-// 	// uint8 underlyingAssetDecimals;
-// 	// require underlyingAssetDecimals == 18;
-// 	// require to_mathint(_underlyingAssetUnits) == 10^underlyingAssetDecimals;
-
-// 	// uint256 priceRatio = _priceStrategy.PRICE_RATIO();
-// 	// require priceRatio >= 10^16 && priceRatio <= 10^20;
-// 	// uint256 sellFeeBP = getSellFeeBP();
-// 	// require sellFeeBP == 5000;
-//     uint256 _ghoBacked = _priceStrategy.getAssetPriceInGho(_currentExposure,false);
-//     require _ghoBacked >= _ghoMinted;
-
-// 	uint128 amount;
-// 	address receiver;
-	
-// 	env e;
-// 	feeLimits(e);
-// 	priceLimits(e);
-
-// 	sellAsset(e, amount, receiver);
-
-// 	uint256 ghoMinted_ = getGhoMinted();
-// 	uint256 currentExposure_ = getAvailableLiquidity();
-	
-//     uint256 ghoBacked_ = _priceStrategy.getAssetPriceInGho(currentExposure_, false);
-
-//     assert to_mathint(ghoBacked_+1)>= to_mathint(ghoMinted_) ,"not enough currentExposure to back the ghoMinted";
-// }
-
-
 // @title solvency rule for non buy sell functions
 // STATUS: PASSED
 // https://prover.certora.com/output/11775/434fcceaf67349e19568b66d7457a35f?anonymousKey=6570aa08aa061ffe7bcf4328ff64714d08764215
 rule enoughULtoBackGhoNonBuySell(method f)
-filtered {
-    f -> !f.isView &&
-	!harnessOnlyMethods(f) &&
-    !buySellAssetsFunctions(f)
-}{
-	uint256 _currentExposure = getAvailableLiquidity();
-	uint256 _ghoMinted = getGhoMinted();
-    uint256 _ghoBacked = _priceStrategy.getAssetPriceInGho(_currentExposure,true);
-    require _ghoBacked >= _ghoMinted;
+  filtered {f -> !f.isView && !harnessOnlyMethods(f) && !buySellAssetsFunctions(f)}
+{
+  uint256 _currentExposure = getAvailableLiquidity();
+  uint256 _ghoUsed = getUsed();
+  uint256 _ghoBacked = _priceStrategy.getAssetPriceInGho(_currentExposure,true);
+  require _ghoBacked >= _ghoUsed;
+  
+  env e;
+  calldataarg args;
 
-    env e;
-    calldataarg args;
-
-    f(e, args);
+  f(e, args);
 	
-	uint256 ghoMinted_ = getGhoMinted();
-	uint256 currentExposure_ = getAvailableLiquidity();
+  uint256 ghoUsed_ = getUsed();
+  uint256 currentExposure_ = getAvailableLiquidity();
 	
-    uint256 ghoBacked_ = _priceStrategy.getAssetPriceInGho(_currentExposure,true);
-    assert ghoBacked_ >= ghoMinted_,"not enough currentExposure to back the ghoMinted";
+  uint256 ghoBacked_ = _priceStrategy.getAssetPriceInGho(_currentExposure,true);
+  assert ghoBacked_ >= ghoUsed_,"not enough currentExposure to back the ghoUsed";
 }
 
 
@@ -149,7 +70,7 @@ rule NonZeroFeeCheckSellAsset(){
 
 
 // STATUS: PASSED
-// https://prover.certora.com/output/11775/434fcceaf67349e19568b66d7457a35f?anonymousKey=6570aa08aa061ffe7bcf4328ff64714d08764215
+// 
 rule NonZeroFeeCheckBuyAsset(){
     
 	uint256 _underlyingAssetUnits = _priceStrategy.getUnderlyingAssetUnits(); 

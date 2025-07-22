@@ -23,9 +23,11 @@ methods
     function _.GHO_TOKEN() external  => DISPATCHER(true);
     
     // GhoToken
-
     function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
 
+    function getUsed() external returns (uint256) envfree;
+
+    
     // Harness
     function getGhoMinted() external returns(uint256) envfree;
     function getPriceRatio() external returns (uint256) envfree;

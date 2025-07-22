@@ -1,20 +1,22 @@
 import "../GsmMethods/shared.spec";
 import "../GsmMethods/erc4626.spec";
 
-using GhoToken as _ghoTokenHook;
+//using GhoToken as _ghoToken;
 using DummyERC20B as UNDERLYING_ASSET;
 
 using FixedPriceStrategy4626Harness as _priceStrategy;
 using FixedFeeStrategyHarness as _FixedFeeStrategy;
 
 methods {
-   // priceStrategy
-    function _priceStrategy.getAssetPriceInGho(uint256, bool) external returns(uint256) envfree;
-    function _priceStrategy.getUnderlyingAssetUnits() external returns(uint256) envfree;
+  // priceStrategy
+  function _priceStrategy.getAssetPriceInGho(uint256, bool) external returns(uint256) envfree;
+  function _priceStrategy.getUnderlyingAssetUnits() external returns(uint256) envfree;
+  
+  // feeStrategy
+  function _FixedFeeStrategy.getBuyFeeBP() external returns(uint256) envfree;
+  function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
 
-    // feeStrategy
-    function _FixedFeeStrategy.getBuyFeeBP() external returns(uint256) envfree;
-    function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
+  function _ghoToken.totalSupply() external returns(uint256) envfree;
 }
 
 // @title Rule checks that In the event the underlying asset increases in value relative
@@ -124,7 +126,7 @@ rule totalAssetsNotIncrease(method f) filtered {f -> f.selector != sig:seize().s
 
 // @title Rule checks that an overall asset of the system (UA - minted gho) stays same.
 // STATUS: VIOLATED
-// https://prover.certora.com/output/11775/de602da1d4cc426bb067f9a0aa4a9a05?anonymousKey=a6365b8a651e118c4ccdfb59df46c26a4d3d32b4
+// 
 // The attempts to solve the timeout:
 // For the general condition:
 //   - general limits + standard timeout - https://prover.certora.com/output/31688/a49f76f4578b4b4ab70b72576bbb0189?anonymousKey=bc3a2e3aae14596c9ba1adc5c566b718c4d02e96
@@ -134,27 +136,27 @@ rule totalAssetsNotIncrease(method f) filtered {f -> f.selector != sig:seize().s
 // Provd that no underbacking happes, i.e. diff >= 0
 //   - general limits + standard timeout https://prover.certora.com/output/31688/caa6714046234cd18e4f09c397dfeec4?anonymousKey=00dc26cf5a0b355c09092650aae7e1f1adf48136
 rule systemBalanceStabilitySell() {
-	uint256 amount;
-	address receiver;
-	env e;
-	require currentContract != e.msg.sender;
-	require currentContract != receiver;
+  uint256 amount;
+  address receiver;
+  env e;
+  require currentContract != e.msg.sender;
+  require currentContract != receiver;
 
-	feeLimits(e);
-	priceLimits(e);
-	require(getAssetPriceInGho(e, amount, false) * _priceStrategy.getUnderlyingAssetUnits()/getPriceRatio() == to_mathint(amount));
+  feeLimits(e);
+  priceLimits(e);
+  require(getAssetPriceInGho(e, amount, false) * _priceStrategy.getUnderlyingAssetUnits()/getPriceRatio() == to_mathint(amount));
 
-	mathint ghoMintedBefore = getGhoMinted(e);
-	mathint balanceBefore = balanceOfUnderlyingDirect(e, currentContract);
+  mathint ghoMintedBefore = getUsed(); //getGhoMinted(e);
+  mathint balanceBefore = balanceOfUnderlyingDirect(e, currentContract);
+  
+  sellAsset(e, amount, receiver);
+  
+  mathint ghoMintedAfter = getUsed(); //getGhoMinted(e);
+  mathint balanceAfter = balanceOfUnderlyingDirect(e, currentContract);
 
-	sellAsset(e, amount, receiver);
-
-	mathint ghoMintedAfter = getGhoMinted(e);
-	mathint balanceAfter = balanceOfUnderlyingDirect(e, currentContract);
-
-	mathint diff = getAssetPriceInGho(e, assert_uint256(balanceAfter - balanceBefore), false) - ghoMintedAfter + ghoMintedBefore;
-	//assert diff >= 0; // no underbacking
-	assert diff >= 0 && diff <= 1;
+  mathint diff = getAssetPriceInGho(e, assert_uint256(balanceAfter - balanceBefore), false) - ghoMintedAfter + ghoMintedBefore;
+  //assert diff >= 0; // no underbacking
+  assert diff >= 0 && diff <= 1;
 }
 
 
@@ -182,7 +184,7 @@ rule systemBalanceStabilityBuy() {
 
 	buyAsset(e, amount, receiver);
 
-	mathint ghoMintedAfter = getGhoMinted(e);
+	mathint ghoMintedAfter = getUsed(); //getGhoMinted(e);
 	mathint balanceAfter = balanceOfUnderlyingDirect(e, currentContract);
 
 
@@ -191,3 +193,54 @@ rule systemBalanceStabilityBuy() {
 	assert -1 <= diff && diff <= 1;
 }
 
+
+
+
+
+
+
+rule temp(method f) {
+  env e;
+  calldataarg args;
+
+  require e.msg.sender != currentContract;
+  require UNDERLYING_ASSET(e) != GHO_TOKEN(e);
+
+  requireInvariant inv_sumAllBalance_eq_totalSupply();
+
+  require getAccruedFee(e) <= getGhoBalanceOfThis(e);
+
+  
+  if (f.selector == sig:buyAssetWithSig(address,uint256,address,uint256,bytes).selector) {
+    address originator;
+    uint256 amount;
+    address receiver;
+    uint256 deadline;
+    bytes signature;
+    require(originator != currentContract);
+    buyAssetWithSig(e, originator, amount, receiver, deadline, signature);
+  } else {
+    f(e,args);
+  }
+
+    //  uint256 maxAmount;    address receiver;
+    // sellAsset(e, maxAmount, receiver);
+
+  assert getAccruedFee(e) <= getGhoBalanceOfThis(e);
+}
+
+
+invariant inv_sumAllBalance_eq_totalSupply()
+  sumAllBalance() == to_mathint(_ghoToken.totalSupply());
+
+ghost sumAllBalance() returns mathint {
+    init_state axiom sumAllBalance() == 0;
+}
+
+hook Sstore _ghoToken.balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
+  havoc sumAllBalance assuming sumAllBalance@new() == sumAllBalance@old() + balance - old_balance;
+}
+
+hook Sload uint256 balance _ghoToken.balanceOf[KEY address a] {
+  require balance <= sumAllBalance();
+}
