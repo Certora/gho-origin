@@ -1,8 +1,10 @@
 import "ghoVariableDebtToken.spec";
 
 methods{
-	function GhoVariableDebtToken._accrueDebtOnAction(address user, uint256, uint256, uint256) internal returns (uint256, uint256) => flipAccrueCalled(user);
-	function GhoVariableDebtToken._refreshDiscountPercent(address user, uint256, uint256, uint256) internal => flipRefreshCalled(user);
+  function GhoVariableDebtToken._accrueDebtOnAction(address user, uint256, uint256, uint256) internal returns (uint256, uint256)
+    => flipAccrueCalled(user);
+  function GhoVariableDebtToken._refreshDiscountPercent(address user, uint256, uint256, uint256) internal
+    => flipRefreshCalled(user);
 }
 
 ghost mapping(address => mathint) accrue_called_counter {
