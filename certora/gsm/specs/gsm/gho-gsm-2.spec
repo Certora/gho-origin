@@ -20,9 +20,11 @@ methods {
     function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
 }
 
+
+
+
 // @title Rule checks that _accruedFees should be <= ghotoken.balanceof(this) with an exception of the function distributeFeesToTreasury().
 // STATUS: PASS
-// https://prover.certora.com/output/11775/281e0b05ac0345edb1d398dcbc329c19?anonymousKey=376f01ddc0cf54741e33c334e83547bb12adba23
 rule accruedFeesLEGhoBalanceOfThis(method f) filtered {
     f -> !f.isView &&
 	!harnessOnlyMethods(f)
@@ -140,7 +142,7 @@ rule systemBalanceStabilityBuy() {
 
 // @title Rule checks that an overall asset of the system (UA - minted gho) stays same.
 // STATUS: PASS
-// https://prover.certora.com/output/11775/281e0b05ac0345edb1d398dcbc329c19?anonymousKey=376f01ddc0cf54741e33c334e83547bb12adba23
+// 
 rule systemBalanceStabilitySell() {
 	uint256 amount;
 	address receiver;

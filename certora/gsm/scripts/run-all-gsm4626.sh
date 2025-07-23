@@ -51,8 +51,28 @@ certoraRun $CMN certora/gsm/conf/gsm4626/fees-sell-4626.conf --rule R3a_estimate
 
 echo
 echo "******** 9. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule accruedFeesLEGhoBalanceOfThis accruedFeesNeverDecrease systemBalanceStabilitySell systemBalanceStabilitySell \
+certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule accruedFeesLEGhoBalanceOfThis accruedFeesNeverDecrease systemBalanceStabilitySell systemBalanceStabilityBuy \
            --msg "9. "
+
+echo
+echo "******** 9a. Running:    ****************"
+certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule accruedFeesLEGhoBalanceOfThis \
+           --msg "9a. "
+
+echo
+echo "******** 9b. Running:    ****************"
+certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule accruedFeesNeverDecrease  \
+           --msg "9b. "
+
+echo
+echo "******** 9c. Running:    ****************"
+certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule systemBalanceStabilitySell \
+           --msg "9c. "
+
+echo
+echo "******** 9d. Running:    ****************"
+certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule systemBalanceStabilityBuy \
+           --msg "9d. "
 
 
 echo

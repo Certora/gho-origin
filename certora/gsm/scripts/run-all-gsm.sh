@@ -52,7 +52,7 @@ certoraRun $CMN certora/gsm/conf/gsm/FixedFeeStrategy.conf \
 
 echo
 echo "******** 11. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/gho-gsm.conf \
+certoraRun $CMN certora/gsm/conf/gsm/gho-gsm-2.conf \
            --msg "11. "
 
 echo

@@ -34,20 +34,20 @@ ghost sumAllBalance() returns mathint {
     init_state axiom sumAllBalance() == 0;
 }
 
-hook Sstore _userState[KEY address a].balance uint128 balance (uint128 old_balance) STORAGE {
+hook Sstore _userState[KEY address a].balance uint128 balance (uint128 old_balance) {
   havoc sumAllBalance assuming sumAllBalance@new() == sumAllBalance@old() + balance - old_balance;
 }
 
 invariant totalSupplyEqualsSumAllBalance(env e)
-    totalSupply() == scaledBalanceOfToBalanceOf(sumAllBalance())
-    filtered { f -> !f.isView && !disAllowedFunctions(f) }
+  totalSupply() == scaledBalanceOfToBalanceOf(require_uint256(sumAllBalance()))
+  filtered { f -> !f.isView && !disAllowedFunctions(f) }
     {
-        preserved mint(address user, address onBehalfOf, uint256 amount, uint256 index) with (env e2) {
-            require index == indexAtTimestamp(e.block.timestamp);
-        }
-        preserved burn(address from, uint256 amount, uint256 index) with (env e3) {
-            require index == indexAtTimestamp(e.block.timestamp);
-        }
+      preserved mint(address user, address onBehalfOf, uint256 amount, uint256 index) with (env e2) {
+        require index == indexAtTimestamp(e.block.timestamp);
+      }
+      preserved burn(address from, uint256 amount, uint256 index) with (env e3) {
+        require index == indexAtTimestamp(e.block.timestamp);
+      }
     }
 
 

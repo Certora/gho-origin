@@ -39,6 +39,10 @@ contract Gsm4626Harness is Gsm4626 {
     (excess, ) = _getCurrentBacking(_getUsed());
   }
 
+  function getUsage() external view returns (uint256, uint256) {
+    return _getUsage();
+  }
+
   function getExceed() external view returns (uint256 exceed) {
     //(exceed, ) = _getCurrentBacking(getGhoMinted());
     (exceed, ) = _getCurrentBacking(_getUsed());
@@ -116,6 +120,7 @@ contract Gsm4626Harness is Gsm4626 {
     return IERC4626(UNDERLYING_ASSET).balanceOf(a);
   }
 
+  // nissan, do we need this function ???
   function getFacilitatorBucket() public view returns (uint256 ghoBucketLevel, uint256 ghoMinted) {
     (ghoBucketLevel, ghoMinted) = IGhoToken(GHO_TOKEN).getFacilitatorBucket(address(this));
   }

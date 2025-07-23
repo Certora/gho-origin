@@ -22,6 +22,7 @@ methods
     function erc20Helper.tokenTotalSupply(address token) external returns (uint256) envfree;
     // GSM.sol
     function _.UNDERLYING_ASSET() external  => DISPATCHER(true);
+    function getUsed() external returns (uint256) envfree;
 
     // priceStrategy
     function _priceStrategy.getAssetPriceInGho(uint256, bool roundUp) external returns(uint256) envfree;
@@ -37,7 +38,7 @@ methods
     function _FixedFeeStrategy.getSellFee(uint256) external returns(uint256) envfree;
     
     // GhoToken
-    function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
+//    function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
     function _ghoToken.balanceOf(address) external returns (uint256) envfree;
 
     // GhoReserve

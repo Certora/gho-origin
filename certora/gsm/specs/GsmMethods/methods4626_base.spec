@@ -38,7 +38,7 @@ methods
     function _FixedFeeStrategy.getSellFee(uint256) external returns(uint256) envfree;
 
     // GhoToken
-    function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
+    //    function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
     function _ghoToken.balanceOf(address) external returns (uint256) envfree;
 
     // Harness
