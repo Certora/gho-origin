@@ -30,7 +30,7 @@ jobs:
         with: { distribution: "zulu", java-version: "11", java-package: jre }
 
       - name: Install certora cli
-        run: pip install certora-cli==4.13.1
+        run: pip install certora-cli==7.31.0
 
       - name: Install solc
         run: |
@@ -68,3 +68,4 @@ jobs:
           - verifyGhoVariableDebtToken_summarized.conf --rule accrueAlwaysCalleldBeforeRefresh
           - verifyGhoVariableDebtTokenInternal.conf
           - verifyGhoVariableDebtToken-rayMulDiv-summarization.conf
+          - verifyGhoVariableDebtToken_specialBranch.conf --rule sendersDiscountPercentCannotIncrease
