@@ -76,8 +76,12 @@ contract GhoReserve is Ownable, VersionedInitializable, IGhoReserve {
 
   /// @inheritdoc IGhoReserve
   function removeEntity(address entity) external onlyOwner {
-    require(_ghoUsage[entity].used == 0, 'ENTITY_GHO_USED_NOT_ZERO');
+    GhoUsage memory usage = _ghoUsage[entity];
+    require(usage.used == 0, 'ENTITY_GHO_USED_NOT_ZERO');
+    require(usage.limit == 0, 'ENTITY_GHO_LIMIT_NOT_ZERO');
     require(_entities.remove(entity), 'ENTITY_NOT_REMOVED');
+
+    delete _ghoUsage[entity];
 
     emit EntityRemoved(entity);
   }
