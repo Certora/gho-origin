@@ -10,56 +10,52 @@ using GhoReserve as _ghoReserve;
 
 methods
 {   
-    function _ghoToken.transferFrom(address from, address to, uint256 amount) external returns bool with (env e) =>
-                    erc20_transferFrom_assumption(calledContract, e, from, to, amount);
-    function _ghoToken.mint(address account, uint256 amount) external with (env e) =>
-                    erc20_mint_assumption(calledContract, e, account, amount);
-    function _ghoToken.transfer(address to, uint256 amount) external returns bool with (env e) =>
-                    erc20_transfer_assumption(calledContract, e, to, amount);
-    function getAvailableLiquidity() external returns (uint256) envfree;
+  function _ghoToken.transferFrom(address from, address to, uint256 amount) external returns bool with (env e) =>
+    erc20_transferFrom_assumption(calledContract, e, from, to, amount);
+  function _ghoToken.mint(address account, uint256 amount) external with (env e) =>
+    erc20_mint_assumption(calledContract, e, account, amount);
+  function _ghoToken.transfer(address to, uint256 amount) external returns bool with (env e) =>
+    erc20_transfer_assumption(calledContract, e, to, amount);
+  function getAvailableLiquidity() external returns (uint256) envfree;
 
-    function erc20Helper.tokenBalanceOf(address token, address user) external returns (uint256) envfree;
-    function erc20Helper.tokenTotalSupply(address token) external returns (uint256) envfree;
-    // GSM.sol
-    function _.UNDERLYING_ASSET() external  => DISPATCHER(true);
-    function getUsed() external returns (uint256) envfree;
+  function erc20Helper.tokenBalanceOf(address token, address user) external returns (uint256) envfree;
+  function erc20Helper.tokenTotalSupply(address token) external returns (uint256) envfree;
+  // GSM.sol
+  function _.UNDERLYING_ASSET() external  => DISPATCHER(true);
+  function getUsed() external returns (uint256) envfree;
 
-    // priceStrategy
-    function _priceStrategy.getAssetPriceInGho(uint256, bool roundUp) external returns(uint256) envfree;
-    function _priceStrategy.getUnderlyingAssetUnits() external returns(uint256) envfree;
-    function _priceStrategy.PRICE_RATIO() external returns(uint256) envfree;
-    function _priceStrategy.getUnderlyingAssetDecimals() external returns(uint256) envfree;
+  // priceStrategy
+  function _priceStrategy.getAssetPriceInGho(uint256, bool roundUp) external returns(uint256) envfree;
+  function _priceStrategy.getUnderlyingAssetUnits() external returns(uint256) envfree;
+  function _priceStrategy.PRICE_RATIO() external returns(uint256) envfree;
+  function _priceStrategy.getUnderlyingAssetDecimals() external returns(uint256) envfree;
 
 
-    // feeStrategy
-    function _FixedFeeStrategy.getBuyFeeBP() external returns(uint256) envfree;
-    function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
-    function _FixedFeeStrategy.getBuyFee(uint256) external returns(uint256) envfree;
-    function _FixedFeeStrategy.getSellFee(uint256) external returns(uint256) envfree;
+  // feeStrategy
+  function _FixedFeeStrategy.getBuyFeeBP() external returns(uint256) envfree;
+  function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
+  function _FixedFeeStrategy.getBuyFee(uint256) external returns(uint256) envfree;
+  function _FixedFeeStrategy.getSellFee(uint256) external returns(uint256) envfree;
     
-    // GhoToken
-//    function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
-    function _ghoToken.balanceOf(address) external returns (uint256) envfree;
-
-    // GhoReserve
-    function _ghoReserve.getUsage(address entity) external returns (uint256, uint256) envfree;
+  // GhoToken
+  //    function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
+  function _ghoToken.balanceOf(address) external returns (uint256) envfree;
+  
+  // GhoReserve
+  function _ghoReserve.getUsage(address entity) external returns (uint256, uint256) envfree;
 
 
     
-    // Harness
-    function getGhoMinted() external returns(uint256) envfree;
-    function getPriceRatio() external returns (uint256) envfree;
-    function getAccruedFees() external returns (uint256) envfree;
-    function balanceOfUnderlying(address) external returns (uint256) envfree;
+  // Harness
+  function getPriceRatio() external returns (uint256) envfree;
+  function getAccruedFees() external returns (uint256) envfree;
+  function balanceOfUnderlying(address) external returns (uint256) envfree;
 }
 
 definition harnessOnlyMethods(method f) returns bool =
         (f.selector == sig:getAccruedFees().selector ||
-        f.selector == sig:getGhoMinted().selector ||
         f.selector == sig:getPriceRatio().selector ||
         f.selector == sig:getExposureCap().selector ||
-        f.selector == sig:getGhoMinted().selector ||
-        f.selector == sig:getGhoMinted().selector ||
         f.selector == sig:getPriceRatio().selector ||
         f.selector == sig:getUnderlyingAssetUnits().selector ||
         f.selector == sig:getUnderlyingAssetDecimals().selector ||
@@ -94,16 +90,16 @@ function basicBuySellSetup( env e, address receiver){
 }
 
 function erc20_transferFrom_assumption(address token, env e, address from, address to, uint256 amount) returns bool {
-        require erc20Helper.tokenBalanceOf(token, from) + erc20Helper.tokenBalanceOf(token, to) <= max_uint256;
-		return _ghoToken.transferFrom(e, from, to, amount);
+  require erc20Helper.tokenBalanceOf(token, from) + erc20Helper.tokenBalanceOf(token, to) <= max_uint256;
+  return _ghoToken.transferFrom(e, from, to, amount);
 }
 
 function erc20_mint_assumption(address token, env e, address account, uint256 amount) {
-        require erc20Helper.tokenBalanceOf(token, account) + amount <= max_uint256;
-		 _ghoToken.mint(e, account, amount);
+  require erc20Helper.tokenBalanceOf(token, account) + amount <= max_uint256;
+  _ghoToken.mint(e, account, amount);
 }
 
 function erc20_transfer_assumption(address token, env e, address to, uint256 amount) returns bool{
-        require erc20Helper.tokenBalanceOf(token, to) + amount <= max_uint256;
-		return _ghoToken.transfer(e, to, amount);
+  require erc20Helper.tokenBalanceOf(token, to) + amount <= max_uint256;
+  return _ghoToken.transfer(e, to, amount);
 }

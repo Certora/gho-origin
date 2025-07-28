@@ -8,39 +8,37 @@ using ERC20Helper as erc20Helper;
 
 methods
 {
-	function _ghoToken.transferFrom(address from, address to, uint256 amount) external returns bool with (env e) =>
-                   erc20_transferFrom_assumption(calledContract, e, from, to, amount);
-	function _ghoToken.mint(address account, uint256 amount) external with (env e) =>
-                   erc20_mint_assumption(calledContract, e, account, amount);
-
-	function erc20Helper.tokenBalanceOf(address token, address user) external returns (uint256) envfree;
-    function erc20Helper.tokenTotalSupply(address token) external returns (uint256) envfree;
-    function getAvailableLiquidity() external returns (uint256) envfree;
-    // GSM.sol
-    // function _.previewRedeem(uint256 shares) external with(env e) => sharesToVaultAssets(e.block.timestamp, shares) expect uint256;
-    // function _.previewWithdraw(uint256 vaultAssets) external with(env e) => vaultAssetsToShares(vaultAssets) expect uint256;
-    function _.UNDERLYING_ASSET() external  => DISPATCHER(true);
-    function _.GHO_TOKEN() external  => DISPATCHER(true);
+  function _ghoToken.transferFrom(address from, address to, uint256 amount) external returns bool with (env e) =>
+    erc20_transferFrom_assumption(calledContract, e, from, to, amount);
+  function _ghoToken.mint(address account, uint256 amount) external with (env e) =>
+    erc20_mint_assumption(calledContract, e, account, amount);
+  
+  function erc20Helper.tokenBalanceOf(address token, address user) external returns (uint256) envfree;
+  function erc20Helper.tokenTotalSupply(address token) external returns (uint256) envfree;
+  function getAvailableLiquidity() external returns (uint256) envfree;
+  // GSM.sol
+  // function _.previewRedeem(uint256 shares) external with(env e) => sharesToVaultAssets(e.block.timestamp, shares) expect uint256;
+  // function _.previewWithdraw(uint256 vaultAssets) external with(env e) => vaultAssetsToShares(vaultAssets) expect uint256;
+  function _.UNDERLYING_ASSET() external  => DISPATCHER(true);
+  function _.GHO_TOKEN() external  => DISPATCHER(true);
     
-    // GhoToken
-    //function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
-
-    function getUsed() external returns (uint256) envfree;
-
+  // GhoToken
+  //function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
+  
+  function getUsed() external returns (uint256) envfree;
+  function getGhoTreasury() external returns (address) envfree;
+  //  function distributeFeesToTreasury() external envfree; 
+  
     
-    // Harness
-    function getGhoMinted() external returns(uint256) envfree;
-    function getPriceRatio() external returns (uint256) envfree;
-    function zeroModulo(uint256, uint256, uint256) external envfree;
+  // Harness
+  function getPriceRatio() external returns (uint256) envfree;
+  function zeroModulo(uint256, uint256, uint256) external envfree;
 }
 
 definition harnessOnlyMethods(method f) returns bool =
         (f.selector == sig:getAccruedFees().selector ||
-        f.selector == sig:getGhoMinted().selector ||
         f.selector == sig:getPriceRatio().selector ||
         f.selector == sig:getExposureCap().selector ||
-        f.selector == sig:getGhoMinted().selector ||
-        f.selector == sig:getGhoMinted().selector ||
         f.selector == sig:getPriceRatio().selector ||
         f.selector == sig:getUnderlyingAssetUnits().selector ||
         f.selector == sig:getUnderlyingAssetDecimals().selector ||

@@ -82,6 +82,7 @@ rule accruedFeesLEGhoBalanceOfThis(method f) {
   assert getAccruedFee(e) <= getGhoBalanceOfThis(e);
 }
 
+
 // @title _accruedFees should never decrease, unless fees are being harvested by Treasury
 // STATUS: PASS
 // Run:
@@ -95,6 +96,7 @@ rule accruedFeesNeverDecrease(method f) filtered {f -> f.selector != sig:distrib
 
     assert feesBefore <= getAccruedFee(e);
 }
+
 
 // @title For price ratio == 1, the total assets of a user should not increase.
 // STATUS: VIOLATED

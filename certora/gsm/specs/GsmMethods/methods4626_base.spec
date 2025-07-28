@@ -42,14 +42,12 @@ methods
     function _ghoToken.balanceOf(address) external returns (uint256) envfree;
 
     // Harness
-    function getGhoMinted() external returns(uint256) envfree;
     function getPriceRatio() external returns (uint256) envfree;
     function getAccruedFees() external returns (uint256) envfree;
 }
 
 definition harnessOnlyMethods(method f) returns bool =
         (f.selector == sig:getAccruedFees().selector ||
-        f.selector == sig:getGhoMinted().selector ||
         f.selector == sig:getDearth().selector ||
         f.selector == sig:getPriceRatio().selector);
 

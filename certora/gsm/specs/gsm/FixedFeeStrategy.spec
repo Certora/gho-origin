@@ -4,16 +4,15 @@ import "../GsmMethods/aave_fee_limits.spec";
 import "../GsmMethods/methods_divint_summary.spec";
 
 methods {
-	function getBuyFeeBP() external returns uint256 envfree;
-	function getSellFeeBP() external returns uint256 envfree;
-	function getPercMathPercentageFactor() external returns uint256 envfree;
+  function getBuyFeeBP() external returns uint256 envfree;
+  function getSellFeeBP() external returns uint256 envfree;
+  function getPercMathPercentageFactor() external returns uint256 envfree;
 	
-    function getBuyFee(uint256) external returns uint256 envfree;
-	function getSellFee(uint256) external returns uint256 envfree;
-
-	function getGrossAmountFromTotalBought(uint256) external returns (uint256)envfree;
-	function getGrossAmountFromTotalSold(uint256) external returns (uint256)envfree;
-
+  function getBuyFee(uint256) external returns uint256 envfree;
+  function getSellFee(uint256) external returns uint256 envfree;
+  
+  function getGrossAmountFromTotalBought(uint256) external returns (uint256)envfree;
+  function getGrossAmountFromTotalSold(uint256) external returns (uint256)envfree;
 }
 
 // @title get{Buy|Sell}Fee(x) <= x

@@ -45,7 +45,7 @@ jobs:
             certora/gsm/conf/gsm/fees-buy.conf
             certora/gsm/conf/gsm/fees-sell.conf
             certora/gsm/conf/gsm/FixedFeeStrategy.conf
-            certora/gsm/conf/gsm/gho-gsm.conf
+            certora/gsm/conf/gsm/gho-gsm-2.conf
             certora/gsm/conf/gsm/optimality.conf --rule R3_optimalityOfSellAsset_v1 R1_optimalityOfBuyAsset_v1 R6a_externalOptimalityOfBuyAsset R5a_externalOptimalityOfSellAsset R2_optimalityOfBuyAsset_v2
             certora/gsm/conf/gsm/getAmount_properties.conf --rule getAssetAmountForBuyAsset_funcProperty_LR getAssetAmountForBuyAsset_funcProperty_RL
             certora/gsm/conf/gsm/finishedRules.conf --rule whoCanChangeExposure whoCanChangeAccruedFees sellingDoesntExceedExposureCap cantBuyOrSellWhenSeized giftingGhoDoesntAffectStorageSIMPLE giftingUnderlyingDoesntAffectStorageSIMPLE collectedBuyFeePlus1IsAtLeastAsRequired sellAssetSameAsGetGhoAmountForSellAsset collectedSellFeeIsAtLeastAsRequired collectedBuyFeeIsAtLeastAsRequired correctnessOfBuyAsset collectedBuyFeePlus2IsAtLeastAsRequired getAssetAmountForSellAsset_correctness cantBuyOrSellWhenFrozen whoCanChangeExposureCap cantSellIfExposureTooHigh sellAssetIncreasesExposure buyAssetDecreasesExposure rescuingGhoKeepsAccruedFees rescuingAssetKeepsAccruedFees

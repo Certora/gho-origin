@@ -24,18 +24,15 @@ contract Gsm4626Harness is Gsm4626 {
     return _currentExposure;
   }
 
-  // nissan, do we need this function ???
-  function getGhoMinted() public view returns (uint256 ghoMinted) {
-    (, ghoMinted) = IGhoToken(GHO_TOKEN).getFacilitatorBucket(address(this));
-  }
+  //function getGhoMinted() public view returns (uint256 ghoMinted) {
+  //  (, ghoMinted) = IGhoToken(GHO_TOKEN).getFacilitatorBucket(address(this));
+  // }
 
   function getDearth() external view returns (uint256 dearth) {
-    //(, dearth) = _getCurrentBacking(getGhoMinted());
     (, dearth) = _getCurrentBacking(_getUsed());
   }
 
   function getExcess() external view returns (uint256 excess) {
-    //(excess, ) = _getCurrentBacking(getGhoMinted());
     (excess, ) = _getCurrentBacking(_getUsed());
   }
 
@@ -44,7 +41,6 @@ contract Gsm4626Harness is Gsm4626 {
   }
 
   function getExceed() external view returns (uint256 exceed) {
-    //(exceed, ) = _getCurrentBacking(getGhoMinted());
     (exceed, ) = _getCurrentBacking(_getUsed());
   }
 
