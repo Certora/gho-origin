@@ -1,5 +1,8 @@
 function feeLimits(env e) {
-    require currentContract.getSellFeeBP(e) <= 1000 && currentContract.getBuyFeeBP(e) < 1000 && (currentContract.getSellFeeBP(e) > 0 || currentContract.getBuyFeeBP(e) > 0);
+    require
+      currentContract.getSellFeeBP(e) <= 1000 &&
+      currentContract.getBuyFeeBP(e) < 1000 &&
+      (currentContract.getSellFeeBP(e) > 0 || currentContract.getBuyFeeBP(e) > 0);
 }
 
 function priceLimits(env e) {

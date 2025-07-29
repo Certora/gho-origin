@@ -1,13 +1,11 @@
+import "../GsmMethods/erc20.spec"; 
+
+import "../GsmMethods/methods_base.spec";
+import "../GsmMethods/methods_divint_summary.spec";
+import "../GsmMethods/aave_price_fee_limits.spec";
 import "../GsmMethods/shared.spec";
 
-
-using GhoToken as _ghoTokenHook;
-//using DummyERC20B as UNDERLYING_ASSET;
-using GhoReserve as _ghoReserve;
-
-using FixedPriceStrategyHarness as _priceStrategy;
-using FixedFeeStrategyHarness as _FixedFeeStrategy;
-
+/*
 methods {
   // priceStrategy
   function _priceStrategy.getAssetPriceInGho(uint256, bool) external returns(uint256) envfree;
@@ -19,13 +17,14 @@ methods {
   function _FixedFeeStrategy.getBuyFeeBP() external returns(uint256) envfree;
   function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
 
-  function _ghoToken.totalSupply() external returns(uint256) envfree;
+  //  function _ghoToken.totalSupply() external returns(uint256) envfree;
 }
-
+*/
 
 //*********************************************************************************************
 // The following invariant is to avoid overflow in the balanceOf of GHO
 //*********************************************************************************************
+/*
 invariant inv_sumAllBalance_eq_totalSupply()
   sumAllBalance() == to_mathint(_ghoToken.totalSupply());
 
@@ -40,7 +39,7 @@ hook Sstore _ghoToken.balanceOf[KEY address a] uint256 balance (uint256 old_bala
 hook Sload uint256 balance _ghoToken.balanceOf[KEY address a] {
   require balance <= sumAllBalance();
 }
-
+*/
 
 
 

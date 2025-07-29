@@ -1,3 +1,5 @@
+import "../GsmMethods/erc20.spec"; 
+
 import "../GsmMethods/methods_base.spec";
 import "../GsmMethods/methods_divint_summary.spec";
 import "../GsmMethods/aave_price_fee_limits_strict.spec";
@@ -94,6 +96,8 @@ rule enoughULtoBackGhoNonBuySell(method f)
 
 // STATUS: PASSED
 rule NonZeroFeeCheckSellAsset(){
+  requireInvariant inv_sumAllBalance_eq_totalSupply();
+
   uint256 _underlyingAssetUnits = _priceStrategy.getUnderlyingAssetUnits(); 
   uint8 underlyingAssetDecimals;
   require underlyingAssetDecimals <78;
@@ -128,8 +132,9 @@ rule NonZeroFeeCheckSellAsset(){
 // for buyAsset function
 // 
  
-rule NonZeroFeeCheckBuyAsset() {
-    
+rule NonZeroFeeCheckBuyAsset() {  
+  requireInvariant inv_sumAllBalance_eq_totalSupply();
+  
   uint256 _underlyingAssetUnits = _priceStrategy.getUnderlyingAssetUnits(); 
   uint8 underlyingAssetDecimals;
   require underlyingAssetDecimals <78;
@@ -161,3 +166,4 @@ rule NonZeroFeeCheckBuyAsset() {
   assert accruedFeeIncrease == GSMGhoBalanceIncrease,"accrued fee should increase by the same amount as the GSM gho balance";
 }
 
+use invariant inv_sumAllBalance_eq_totalSupply;

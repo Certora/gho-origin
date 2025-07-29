@@ -1,3 +1,6 @@
+import "../GsmMethods/erc20.spec"; 
+
+
 import "../GsmMethods/methods_base.spec";
 import "../GsmMethods/aave_price_fee_limits.spec";
 import "../GsmMethods/methods_divint_summary.spec";

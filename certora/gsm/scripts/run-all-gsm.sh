@@ -1,58 +1,65 @@
 CMN="--compilation_steps_only"
 
 echo
-echo "******** 1. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/gho-gsm_inverse.conf \
-           --msg "1. "
+echo "******** 1. Running: gsm/gho-gsm.conf   ****************"
+certoraRun $CMN certora/gsm/conf/gsm/gho-gsm-1.conf \
+           --msg "1. gsm/gho-gsm-1.conf"
 
 echo
-echo "******** 2. Running: gsm/gho-gsm.conf   ****************"
-certoraRun $CMN certora/gsm/conf/gsm/gho-gsm.conf \
-           --msg "2. gsm/gho-gsm.conf"
+echo "******** 2. Running:    ****************"
+certoraRun $CMN certora/gsm/conf/gsm/gho-gsm-2.conf \
+           --msg "2. gsm/gho-gsm-2.conf"
 
 echo
 echo "******** 3. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/balances-buy.conf \
-           --msg "3. "
+certoraRun $CMN certora/gsm/conf/gsm/gho-gsm-inverse.conf \
+           --msg "3. gsm/gho-gsm-inverse.conf"
 
 echo
 echo "******** 4. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/balances-sell.conf \
+certoraRun $CMN certora/gsm/conf/gsm/balances-buy.conf \
            --msg "4. "
 
 echo
 echo "******** 5. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/gho-assetToGhoInvertibility.conf --rule basicProperty_getAssetAmountForBuyAsset sellAssetInverse_all buyAssetInverse_all basicProperty_getGhoAmountForSellAsset basicProperty_getAssetAmountForSellAsset basicProperty_getGhoAmountForBuyAsset \
+certoraRun $CMN certora/gsm/conf/gsm/balances-sell.conf \
            --msg "5. "
 
 echo
 echo "******** 6. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/gho-assetToGhoInvertibility.conf --rule basicProperty2_getAssetAmountForBuyAsset \
+certoraRun $CMN certora/gsm/conf/gsm/fees-buy.conf \
            --msg "6. "
 
 echo
-echo "******** 7. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/gho-fixedPriceStrategy.conf \
-           --msg "7. "
+echo "******** 7a. Running:    ****************"
+certoraRun $CMN certora/gsm/conf/gsm/fees-sell.conf --exclude_rule R3_estimatedSellFeeCanBeHigherThanActualSellFee \
+           --msg "7a. fees-sell.conf:: exclude_rule R3"
+
+echo
+echo "******** 7b. Running:    ****************"
+certoraRun $CMN certora/gsm/conf/gsm/fees-sell.conf --rule R3_estimatedSellFeeCanBeHigherThanActualSellFee \
+           --msg "7b. fees-sell.conf:: rule R3"
 
 echo
 echo "******** 8. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/fees-buy.conf \
-           --msg "8. "
+certoraRun $CMN certora/gsm/conf/gsm/gho-fixedPriceStrategy.conf \
+           --msg "8. gsm/gho-fixedPriceStrategy.conf"
 
 echo
 echo "******** 9. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/fees-sell.conf \
-           --msg "9. "
+certoraRun $CMN certora/gsm/conf/gsm/FixedFeeStrategy.conf \
+           --msg "9. gsm/FixedFeeStrategy.conf"
+
+
 
 echo
 echo "******** 10. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/FixedFeeStrategy.conf \
+certoraRun $CMN certora/gsm/conf/gsm/gho-assetToGhoInvertibility.conf --rule basicProperty_getAssetAmountForBuyAsset sellAssetInverse_all buyAssetInverse_all basicProperty_getGhoAmountForSellAsset basicProperty_getAssetAmountForSellAsset basicProperty_getGhoAmountForBuyAsset \
            --msg "10. "
 
 echo
 echo "******** 11. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm/gho-gsm-2.conf \
+certoraRun $CMN certora/gsm/conf/gsm/gho-assetToGhoInvertibility.conf --rule basicProperty2_getAssetAmountForBuyAsset \
            --msg "11. "
 
 echo

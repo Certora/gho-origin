@@ -1,11 +1,17 @@
+import "../GsmMethods/methods4626_base.spec";
+import "../GsmMethods/methods_divint_summary.spec";
+import "../GsmMethods/aave_price_fee_limits.spec";
 import "../GsmMethods/shared.spec";
+
+
+//import "../GsmMethods/shared.spec";
 import "../GsmMethods/erc4626.spec";
 
 using DummyERC20B as UNDERLYING_ASSET;
-using GhoReserve as _ghoReserve;
+//using GhoReserve as _ghoReserve;
 
-using FixedPriceStrategy4626Harness as _priceStrategy;
-using FixedFeeStrategyHarness as _FixedFeeStrategy;
+//using FixedPriceStrategy4626Harness as _priceStrategy;
+//using FixedFeeStrategyHarness as _FixedFeeStrategy;
 
 methods {
   // priceStrategy
