@@ -1,26 +1,26 @@
-import "./erc20.spec";
+//import "../shared/erc20.spec";
 
 
 using FixedPriceStrategy4626Harness as _priceStrategy;
 using FixedFeeStrategyHarness as _FixedFeeStrategy;
 using GhoToken as _ghoToken;
-using ERC20Helper as erc20Helper;
+//using ERC20Helper as erc20Helper;
 using GhoReserve as _ghoReserve;
 
 /////////////////// Methods ////////////////////////
 
 methods
 {
-    function _ghoToken.transferFrom(address from, address to, uint256 amount) external returns bool with (env e) =>
+  /*    function _ghoToken.transferFrom(address from, address to, uint256 amount) external returns bool with (env e) =>
                     erc20_transferFrom_assumption(calledContract, e, from, to, amount);
     function _ghoToken.mint(address account, uint256 amount) external with (env e) =>
                     erc20_mint_assumption(calledContract, e, account, amount);
     function _ghoToken.transfer(address to, uint256 amount) external returns bool with (env e) =>
-                    erc20_transfer_assumption(calledContract, e, to, amount);
+    erc20_transfer_assumption(calledContract, e, to, amount);*/
     function getAvailableLiquidity() external returns (uint256) envfree;
     function getCurrentBacking() external returns(uint256, uint256) envfree;
-    function erc20Helper.tokenBalanceOf(address token, address user) external returns (uint256) envfree;
-    function erc20Helper.tokenTotalSupply(address token) external returns (uint256) envfree;
+    //    function erc20Helper.tokenBalanceOf(address token, address user) external returns (uint256) envfree;
+    //function erc20Helper.tokenTotalSupply(address token) external returns (uint256) envfree;
 
     // GSM.sol
     function _.UNDERLYING_ASSET() external  => DISPATCHER(true);
@@ -40,6 +40,7 @@ methods
     // GhoToken
     //    function _ghoToken.getFacilitatorBucket(address) external returns (uint256, uint256) envfree;
     function _ghoToken.balanceOf(address) external returns (uint256) envfree;
+    function _ghoToken.totalSupply() external returns(uint256) envfree;
 
     // Harness
     function getPriceRatio() external returns (uint256) envfree;
@@ -64,17 +65,68 @@ function basicBuySellSetup( env e, address receiver) {
     require UNDERLYING_ASSET(e) != _ghoToken;
     require UNDERLYING_ASSET(e) != _ghoReserve;
 }
-function erc20_transferFrom_assumption(address token, env e, address from, address to, uint256 amount) returns bool {
-        require erc20Helper.tokenBalanceOf(token, from) + erc20Helper.tokenBalanceOf(token, to) <= max_uint256;
-		return _ghoToken.transferFrom(e, from, to, amount);
+
+//function erc20_transferFrom_assumption(address token, env e, address from, address to, uint256 amount) returns bool {
+//        require erc20Helper.tokenBalanceOf(token, from) + erc20Helper.tokenBalanceOf(token, to) <= max_uint256;
+//		return _ghoToken.transferFrom(e, from, to, amount);
+//}
+
+//function erc20_mint_assumption(address token, env e, address account, uint256 amount) {
+//        require erc20Helper.tokenBalanceOf(token, account) + amount <= max_uint256;
+//		 _ghoToken.mint(e, account, amount);
+//}
+
+//function erc20_transfer_assumption(address token, env e, address to, uint256 amount) returns bool{
+//        require erc20Helper.tokenBalanceOf(token, to) + amount <= max_uint256;
+//		return _ghoToken.transfer(e, to, amount);
+//}
+
+/*
+function priceLimits(env e) {
+    uint8 exp;
+    require 5 <= exp;
+    require exp <= 27;
+    require getUnderlyingAssetUnits(e) == require_uint256((10^exp)) && getPriceRatio(e) >= 10^16 && getPriceRatio(e) <= 10^20;
 }
 
-function erc20_mint_assumption(address token, env e, address account, uint256 amount) {
-        require erc20Helper.tokenBalanceOf(token, account) + amount <= max_uint256;
-		 _ghoToken.mint(e, account, amount);
+function feeLimits(env e) {
+  require
+    currentContract.getSellFeeBP(e) <= 5000 &&
+    currentContract.getBuyFeeBP(e) < 5000 &&
+    (currentContract.getSellFeeBP(e) > 0 || currentContract.getBuyFeeBP(e) > 0);
+}
+*/
+
+
+//*********************************************************************************************
+// The following invariant is to avoid overflow in the balanceOf of GHO
+//*********************************************************************************************
+invariant inv_sumAllBalance_eq_totalSupply()
+  sumAllBalance() == to_mathint(_ghoToken.totalSupply());
+
+ghost sumAllBalance() returns mathint {
+    init_state axiom sumAllBalance() == 0;
 }
 
-function erc20_transfer_assumption(address token, env e, address to, uint256 amount) returns bool{
-        require erc20Helper.tokenBalanceOf(token, to) + amount <= max_uint256;
-		return _ghoToken.transfer(e, to, amount);
+hook Sstore _ghoToken.balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
+  havoc sumAllBalance assuming sumAllBalance@new() == sumAllBalance@old() + balance - old_balance;
+}
+
+hook Sload uint256 balance _ghoToken.balanceOf[KEY address a] {
+  require balance <= sumAllBalance();
+}
+
+
+function priceLimits(env e) {
+    uint8 exp;
+    require 5 <= exp;
+    require exp <= 27;
+    require getUnderlyingAssetUnits(e) == require_uint256((10^exp)) && getPriceRatio(e) >= 10^16 && getPriceRatio(e) <= 10^20;
+}
+
+function feeLimits(env e) {
+  require
+    currentContract.getSellFeeBP(e) <= 5000 &&
+    currentContract.getBuyFeeBP(e) < 5000 &&
+    (currentContract.getSellFeeBP(e) > 0 || currentContract.getBuyFeeBP(e) > 0);
 }

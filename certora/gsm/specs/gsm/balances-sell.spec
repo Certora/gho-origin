@@ -1,8 +1,8 @@
-import "../GsmMethods/methods_divint_summary.spec";
-import "../GsmMethods/aave_price_fee_limits.spec";
+import "methods_base.spec";
+import "../shared/methods_divint_summary.spec";
 
 using DiffHelper as diffHelper;
-using GhoReserve as _ghoReserve;
+//using GhoReserve as _ghoReserve;
 
 // ========================= Selling ==============================
 // The user wants to buy GHO and asks how much asset should be sold.  Fees are

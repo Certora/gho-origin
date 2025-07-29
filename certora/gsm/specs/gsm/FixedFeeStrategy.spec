@@ -1,7 +1,6 @@
 // verifies properties of FixedFeestrategy
 
-import "../GsmMethods/aave_fee_limits.spec";
-import "../GsmMethods/methods_divint_summary.spec";
+import "../shared/methods_divint_summary.spec";
 
 methods {
   function getBuyFeeBP() external returns uint256 envfree;
@@ -14,6 +13,14 @@ methods {
   function getGrossAmountFromTotalBought(uint256) external returns (uint256)envfree;
   function getGrossAmountFromTotalSold(uint256) external returns (uint256)envfree;
 }
+
+function feeLimits(env e) {
+  require
+    currentContract.getSellFeeBP(e) <= 5000 &&
+    currentContract.getBuyFeeBP(e) < 5000 &&
+    (currentContract.getSellFeeBP(e) > 0 || currentContract.getBuyFeeBP(e) > 0);
+}
+
 
 // @title get{Buy|Sell}Fee(x) <= x
 // STATUS: PASS

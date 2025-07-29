@@ -1,6 +1,7 @@
 import "../GsmMethods/methods4626_base.spec";
-import "../GsmMethods/aave_price_fee_limits.spec";
-import "../GsmMethods/methods_divint_summary.spec";
+
+//import "../GsmMethods/aave_price_fee_limits.spec";
+import "../shared/methods_divint_summary.spec";
 import "../GsmMethods/erc4626.spec";
 
 // @Title 4626: For values given by `getAssetAmountForBuyAsset`, the user can only get more by paying more

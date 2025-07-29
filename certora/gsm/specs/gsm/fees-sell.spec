@@ -1,6 +1,6 @@
-//import "../GsmMethods/erc20.spec";
-import "../GsmMethods/methods_divint_summary.spec";
-import "../GsmMethods/aave_price_fee_limits.spec";
+import "methods_base.spec";
+import "../shared/methods_divint_summary.spec";
+//import "../shared/erc20.spec";
 
 using DiffHelper as diffHelper;
 
@@ -134,7 +134,7 @@ rule R3_estimatedSellFeeCanBeHigherThanActualSellFee {
     env e;
     feeLimits(e);
     priceLimits(e);
-    require getSellFeeBP(e) == 1000;
+    require getSellFeeBP(e) <= 1000;
     
     uint128 ghoAmount;
     address receiver;

@@ -1,8 +1,8 @@
-import "../GsmMethods/methods_divint_summary.spec";
-import "../GsmMethods/aave_price_fee_limits.spec";
+import "methods_base.spec";
+import "../shared/methods_divint_summary.spec";
 
 using DiffHelper as diffHelper;
-using GhoReserve as _ghoReserve;
+//using GhoReserve as _ghoReserve;
 
 // ========================= Buying ==============================
 // The results are available in this run:

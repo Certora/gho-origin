@@ -1,7 +1,9 @@
 import "../GsmMethods/methods4626_base.spec";
-import "../GsmMethods/methods_divint_summary.spec";
-import "../GsmMethods/aave_price_fee_limits.spec";
+
+import "../shared/methods_divint_summary.spec";
+import "../shared/erc20.spec";
 import "../GsmMethods/erc4626.spec";
+
 
 // @title solvency rule for non buy sell functions
 // STATUS: PASSED
@@ -37,7 +39,9 @@ rule enoughULtoBackGhoNonBuySell(method f)
 
 
 
-rule NonZeroFeeCheckSellAsset(){
+rule NonZeroFeeCheckSellAsset() {
+    requireInvariant inv_sumAllBalance_eq_totalSupply();
+
 	uint256 _underlyingAssetUnits = _priceStrategy.getUnderlyingAssetUnits(); 
 	uint8 underlyingAssetDecimals;
 	require underlyingAssetDecimals <78;
@@ -71,8 +75,9 @@ rule NonZeroFeeCheckSellAsset(){
 
 // STATUS: PASSED
 // 
-rule NonZeroFeeCheckBuyAsset(){
-    
+rule NonZeroFeeCheckBuyAsset() {
+  requireInvariant inv_sumAllBalance_eq_totalSupply();
+
 	uint256 _underlyingAssetUnits = _priceStrategy.getUnderlyingAssetUnits(); 
 	uint8 underlyingAssetDecimals;
 	require underlyingAssetDecimals <78;

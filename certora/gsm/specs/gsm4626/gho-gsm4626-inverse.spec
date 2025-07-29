@@ -1,5 +1,6 @@
 import "../GsmMethods/methods4626_base.spec";
-import "../GsmMethods/methods_divint_summary.spec";
+
+import "../shared/methods_divint_summary.spec";
 import "../GsmMethods/erc4626.spec";
 
 

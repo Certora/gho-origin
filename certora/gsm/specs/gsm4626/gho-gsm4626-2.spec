@@ -1,10 +1,12 @@
 import "../GsmMethods/methods4626_base.spec";
-import "../GsmMethods/methods_divint_summary.spec";
-import "../GsmMethods/aave_price_fee_limits.spec";
-import "../GsmMethods/shared.spec";
+
+import "../shared/methods_divint_summary.spec";
+//import "../GsmMethods/aave_price_fee_limits.spec";
+import "../shared/shared.spec";
+import "../shared/erc20.spec";
 
 
-//import "../GsmMethods/shared.spec";
+//import "../shared/shared.spec";
 import "../GsmMethods/erc4626.spec";
 
 using DummyERC20B as UNDERLYING_ASSET;
@@ -12,6 +14,7 @@ using DummyERC20B as UNDERLYING_ASSET;
 
 //using FixedPriceStrategy4626Harness as _priceStrategy;
 //using FixedFeeStrategyHarness as _FixedFeeStrategy;
+
 
 methods {
   // priceStrategy
@@ -21,28 +24,8 @@ methods {
   // feeStrategy
   function _FixedFeeStrategy.getBuyFeeBP() external returns(uint256) envfree;
   function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
-
-  function _ghoToken.totalSupply() external returns(uint256) envfree;
 }
 
-
-//*********************************************************************************************
-// The following invariant is to avoid overflow in the balanceOf of GHO
-//*********************************************************************************************
-invariant inv_sumAllBalance_eq_totalSupply()
-  sumAllBalance() == to_mathint(_ghoToken.totalSupply());
-
-ghost sumAllBalance() returns mathint {
-    init_state axiom sumAllBalance() == 0;
-}
-
-hook Sstore _ghoToken.balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
-  havoc sumAllBalance assuming sumAllBalance@new() == sumAllBalance@old() + balance - old_balance;
-}
-
-hook Sload uint256 balance _ghoToken.balanceOf[KEY address a] {
-  require balance <= sumAllBalance();
-}
 
 
 
@@ -169,7 +152,7 @@ rule systemBalanceStabilitySell() {
 
   feeLimits(e);
   priceLimits(e);
-  require(getAssetPriceInGho(e, amount, false) * _priceStrategy.getUnderlyingAssetUnits()/getPriceRatio() == to_mathint(amount));
+  //  require(getAssetPriceInGho(e, amount, false) * _priceStrategy.getUnderlyingAssetUnits()/getPriceRatio() == to_mathint(amount));
 
   mathint ghoUsedBefore = getUsed();
   mathint balanceBefore = balanceOfUnderlyingDirect(e, currentContract);
@@ -199,7 +182,7 @@ rule systemBalanceStabilityBuy() {
   
   feeLimits(e);
   priceLimits(e);
-  require (getAssetPriceInGho(e, amount, false) * _priceStrategy.getUnderlyingAssetUnits()/getPriceRatio() == to_mathint(amount) );
+  //  require (getAssetPriceInGho(e, amount, false) * _priceStrategy.getUnderlyingAssetUnits()/getPriceRatio() == to_mathint(amount) );
   
   uint256 limit;
   uint256 ghoUsedBefore;
