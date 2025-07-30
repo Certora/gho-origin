@@ -53,7 +53,7 @@ rule accruedFeesLEGhoBalanceOfThis(method f) {
 
   require(getAccruedFee(e) <= getGhoBalanceOfThis(e));
   require(e.msg.sender != currentContract);
-  require(UNDERLYING_ASSET(e) != GHO_TOKEN(e));
+  //  require(UNDERLYING_ASSET(e) != GHO_TOKEN(e));
   requireInvariant inv_sumAllBalance_eq_totalSupply();
 
   if (f.selector == sig:buyAssetWithSig(address,uint256,address,uint256,bytes).selector) {
