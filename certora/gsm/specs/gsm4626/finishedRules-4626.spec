@@ -1,9 +1,9 @@
-import "../GsmMethods/methods4626_base.spec";
+import "methods4626_base.spec";
 
 //import "../GsmMethods/aave_price_fee_limits.spec";
 import "../shared/methods_divint_summary.spec";
 import "../shared/erc20.spec";
-import "../GsmMethods/erc4626.spec";
+import "erc4626.spec";
 
 
 // @title Rescuing GHO never lefts less GHO available than _accruedFees.

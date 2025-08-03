@@ -98,10 +98,10 @@ rule totalAssetsNotIncrease(method f) filtered {f ->
   env e;
 
   // we focus on a user so remove address of contracts
-  require e.msg.sender != currentContract, "sender can't be current contract";
-  require e.msg.sender != _ghoReserve, "sender can't be the Gho-Reserve contract";
-  require e.msg.sender != getGhoTreasury(), "sender can't be the treasury";
-  require e.msg.sender != 0, "sender can't be 0";
+  require e.msg.sender != currentContract;
+  require e.msg.sender != _ghoReserve;
+  require e.msg.sender != getGhoTreasury();
+  require e.msg.sender != 0;
 
   feeLimits(e);
   priceLimits(e);

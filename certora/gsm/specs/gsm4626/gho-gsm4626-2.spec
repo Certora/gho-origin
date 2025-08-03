@@ -1,20 +1,12 @@
-import "../GsmMethods/methods4626_base.spec";
+import "methods4626_base.spec";
 
 import "../shared/methods_divint_summary.spec";
-//import "../GsmMethods/aave_price_fee_limits.spec";
 import "../shared/shared.spec";
 import "../shared/erc20.spec";
+import "erc4626.spec";
 
 
-//import "../shared/shared.spec";
-import "../GsmMethods/erc4626.spec";
-
-using DummyERC20B as UNDERLYING_ASSET;
-//using GhoReserve as _ghoReserve;
-
-//using FixedPriceStrategy4626Harness as _priceStrategy;
-//using FixedFeeStrategyHarness as _FixedFeeStrategy;
-
+using DummyERC20B as UNDERLYING_ASSET; // should have no effect
 
 methods {
   // priceStrategy
@@ -24,6 +16,9 @@ methods {
   // feeStrategy
   function _FixedFeeStrategy.getBuyFeeBP() external returns(uint256) envfree;
   function _FixedFeeStrategy.getSellFeeBP() external returns(uint256) envfree;
+
+  // GSM4626.sol
+  //  function _.UNDERLYING_ASSET() external  => DISPATCHER(true);
 }
 
 
@@ -53,7 +48,6 @@ rule accruedFeesLEGhoBalanceOfThis(method f) {
 
   require(getAccruedFee(e) <= getGhoBalanceOfThis(e));
   require(e.msg.sender != currentContract);
-  //  require(UNDERLYING_ASSET(e) != GHO_TOKEN(e));
   requireInvariant inv_sumAllBalance_eq_totalSupply();
 
   if (f.selector == sig:buyAssetWithSig(address,uint256,address,uint256,bytes).selector) {

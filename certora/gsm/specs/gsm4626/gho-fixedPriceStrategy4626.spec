@@ -1,4 +1,4 @@
-import "../GsmMethods/erc4626.spec";
+import "erc4626.spec";
 
 
 methods {

@@ -1,17 +1,4 @@
-//import "../GsmMethods/methods_base-Martin.spec";
-//import "../GsmMethods/methods_divint_summary.spec";
-//import "../GsmMethods/aave_price_fee_limits.spec";
 
-/**
- *
- * SHARED RULES
- *
- */
-/**
- *
- * SHARED FUNCTIONALITY
- *
- */
 // Computes sum of assets of the addresses passed as parameters taking into account that
 // some of the addresses may be the same.
 function assetOfUsers(env e, address sender, address receiver, address originator, mathint price_ratio, mathint underlyingAssetUnits) returns mathint {
