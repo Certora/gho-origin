@@ -16,15 +16,11 @@ echo "******** 2b. Running:    ****************"
 certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule accruedFeesNeverDecrease  \
            --msg "2b. "
 
-echo
-echo "******** 2c. Running:    ****************"
-certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule systemBalanceStabilitySell \
-           --msg "2c. "
-
+# waiting for ticket CERT-9408
 #echo
-#echo "******** 2d. Running:    ****************"
-#certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule systemBalanceStabilityBuy \
-#           --msg "2d. "
+#echo "******** 2c. Running:    ****************"
+#certoraRun $CMN certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule systemBalanceStabilitySell \
+#           --msg "2c. "
 
 
 echo

@@ -23,7 +23,21 @@ certoraRun $CMN certora/gsm/conf/gsm/balances-buy.conf \
 echo
 echo "******** 5. Running:    ****************"
 certoraRun $CMN certora/gsm/conf/gsm/balances-sell.conf \
-           --msg "5. "
+           --exclude_rule R3_sellAssetUpdatesAssetBalanceCorrectly R4_buyGhoUpdatesGhoBalanceCorrectly \
+           --msg "5. conf/gsm/balances-sell.conf:: All except R3,R4"
+
+# waiting for ticket CERT-9408
+#echo
+#echo "******** 5a. Running:    ****************"
+#certoraRun $CMN certora/gsm/conf/gsm/balances-sell.conf --rule R3_sellAssetUpdatesAssetBalanceCorrectly \
+#           --msg "5a. conf/gsm/balances-sell.conf:: R3"
+
+
+# waiting for ticket CERT-9408
+#echo
+#echo "******** 5b. Running:    ****************"
+#certoraRun $CMN certora/gsm/conf/gsm/balances-sell.conf --rule R4_buyGhoUpdatesGhoBalanceCorrectly\
+#           --msg "5b. conf/gsm/balances-sell.conf:: R4"
 
 echo
 echo "******** 6. Running:    ****************"

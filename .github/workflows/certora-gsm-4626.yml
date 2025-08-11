@@ -39,7 +39,7 @@ jobs:
             certora/gsm/conf/gsm4626/gho-gsm4626-1.conf
             certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule accruedFeesLEGhoBalanceOfThis 
             certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule accruedFeesNeverDecrease  
-            certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule systemBalanceStabilitySell 
+            #certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule systemBalanceStabilitySell waiting for ticket CERT-9408
             certora/gsm/conf/gsm4626/gho-gsm4626-inverse.conf --rule buySellInverse27 buySellInverse26 buySellInverse25 buySellInverse24 buySellInverse23 buySellInverse22 buySellInverse21 buySellInverse20 buySellInverse19
             certora/gsm/conf/gsm4626/balances-buy-4626.conf
             certora/gsm/conf/gsm4626/balances-sell-4626.conf --rule R1_getAssetAmountForSellAsset_arg_vs_return R1a_buyGhoUpdatesGhoBalanceCorrectly1 R2_getAssetAmountForSellAsset_sellAsset_eq

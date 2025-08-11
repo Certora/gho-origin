@@ -125,8 +125,8 @@ rule R3a_sellAssetUpdatesAssetBalanceCorrectly {
 
 // @Title The GHO amount added to the user's account at `sellAsset` is at least the value `x` passed to `getAssetAmountForSellAsset(x)`
 // (4)
-// STATUS: TIMEOUT
-// https://prover.certora.com/output/11775/04f9aa998c0045839ed5e0fa8f17465d?anonymousKey=ba48d972104e53d04391136fa6e98e2eaeaf7d56
+// STATUS: 
+// 
 rule R4_buyGhoUpdatesGhoBalanceCorrectly {
     env e;
     feeLimits(e);
