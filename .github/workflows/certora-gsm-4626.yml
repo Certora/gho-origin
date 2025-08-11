@@ -7,8 +7,7 @@ concurrency:
 on:
   pull_request:
     branches:
-      - main
-      - certora
+      - '*'
   push:
     branches:
       - main
@@ -34,7 +33,6 @@ jobs:
       - uses: Certora/certora-run-action@v2
         with:
           cli-version: 7.31.1
-          cli-release: beta-mirror
           configurations: |-
             certora/gsm/conf/gsm4626/gho-gsm4626-1.conf
             certora/gsm/conf/gsm4626/gho-gsm4626-2.conf --rule accruedFeesLEGhoBalanceOfThis 

@@ -7,8 +7,7 @@ concurrency:
 on:
   pull_request:
     branches:
-      - main
-      - certora
+      - '*'
   push:
     branches:
       - main
@@ -40,7 +39,6 @@ jobs:
       - uses: Certora/certora-run-action@v2
         with:
           cli-version: 7.31.1
-          cli-release: beta-mirror
           configurations: |-
             certora/steward/conf/GhoAaveSteward.conf
             certora/steward/conf/GhoBucketSteward.conf
