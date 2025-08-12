@@ -70,13 +70,13 @@ contract TestGhoReserve is TestGhoBase {
 
     GHO_RESERVE.setLimit(newEntity, value);
 
-    vm.expectRevert("LIMIT_EXCEEDED");
+    vm.expectRevert('LIMIT_EXCEEDED');
     vm.prank(newEntity);
     GHO_RESERVE.use(value + 1);
   }
 
   function testUseNotEntity() public {
-    vm.expectRevert("LIMIT_EXCEEDED");
+    vm.expectRevert('LIMIT_EXCEEDED');
     GHO_RESERVE.use(1_000 ether);
   }
 
@@ -130,7 +130,7 @@ contract TestGhoReserve is TestGhoBase {
   }
 
   function testRestoreNotEntity() public {
-    vm.expectRevert("LIMIT_EXCEEDED");
+    vm.expectRevert('LIMIT_EXCEEDED');
     GHO_RESERVE.use(1_000 ether);
   }
 
@@ -160,7 +160,7 @@ contract TestGhoReserve is TestGhoBase {
   }
 
   function testRemoveEntity() public {
-    uint256 limit =  1_000_000 ether;
+    uint256 limit = 1_000_000 ether;
     address alice = makeAddr('alice');
     vm.expectEmit(true, true, true, true, address(GHO_RESERVE));
     emit EntityAdded(alice);

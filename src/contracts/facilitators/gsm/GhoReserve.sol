@@ -81,8 +81,6 @@ contract GhoReserve is Ownable, VersionedInitializable, IGhoReserve {
     require(usage.limit == 0, 'ENTITY_GHO_LIMIT_NOT_ZERO');
     require(_entities.remove(entity), 'ENTITY_NOT_REMOVED');
 
-    delete _ghoUsage[entity];
-
     emit EntityRemoved(entity);
   }
 
