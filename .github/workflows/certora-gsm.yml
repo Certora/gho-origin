@@ -32,7 +32,8 @@ jobs:
 
       - uses: Certora/certora-run-action@v2
         with:
-          cli-version: 7.31.1
+          cli-version: 7.31.2
+          cli-release: beta-mirror
           configurations: |-
             certora/gsm/conf/gsm/gho-gsm-1.conf
             certora/gsm/conf/gsm/gho-gsm-2.conf
