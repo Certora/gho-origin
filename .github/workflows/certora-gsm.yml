@@ -7,7 +7,7 @@ concurrency:
 on:
   pull_request:
     branches:
-      - '*'
+      - "*"
   push:
     branches:
       - main
@@ -51,7 +51,7 @@ jobs:
             certora/gsm/conf/gsm/finishedRules.conf --rule whoCanChangeExposure whoCanChangeAccruedFees sellingDoesntExceedExposureCap cantBuyOrSellWhenSeized giftingGhoDoesntAffectStorageSIMPLE giftingUnderlyingDoesntAffectStorageSIMPLE collectedBuyFeePlus1IsAtLeastAsRequired sellAssetSameAsGetGhoAmountForSellAsset collectedSellFeeIsAtLeastAsRequired collectedBuyFeeIsAtLeastAsRequired correctnessOfBuyAsset collectedBuyFeePlus2IsAtLeastAsRequired getAssetAmountForSellAsset_correctness cantBuyOrSellWhenFrozen whoCanChangeExposureCap cantSellIfExposureTooHigh sellAssetIncreasesExposure buyAssetDecreasesExposure rescuingGhoKeepsAccruedFees rescuingAssetKeepsAccruedFees
             certora/gsm/conf/gsm/gho-fixedPriceStrategy.conf
             certora/gsm/conf/gsm/FixedFeeStrategy.conf
-            certora/gsm/conf/gsm/OracleSwapFreezer.conf        
+            certora/gsm/conf/gsm/OracleSwapFreezer.conf
           solc-versions: 0.8.20
           comment-fail-only: false
           solc-remove-version-prefix: "0."
@@ -60,4 +60,3 @@ jobs:
           install-java: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
