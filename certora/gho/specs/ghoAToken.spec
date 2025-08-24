@@ -39,34 +39,57 @@ methods{
 
 }
 
+definition is_reverting_func(method f) returns bool =
+  f.selector == sig:burn(address, address, uint256, uint256).selector
+  || f.selector == sig:mint(address, address, uint256, uint256  ).selector
+  || f.selector == sig:mintToTreasury(uint256, uint256).selector 
+  || f.selector == sig:transferOnLiquidation(address, address, uint256).selector
+  || f.selector == sig:transferFrom(address,address,uint256).selector
+  || f.selector == sig:transfer(address,uint256).selector
+  || f.selector == sig:permit(address, address, uint256, uint256, uint8, bytes32, bytes32).selector
+  || f.selector == sig:setVariableDebtToken(address).selector
+  ;
+
+
+rule must_revert(method f) filtered {f -> is_reverting_func(f)} {
+  env e; calldataarg args;
+  f@withrevert(e, args);
+  assert lastReverted;
+}
+    
+
+
 /**
 * @title Proves that ghoAToken::mint always reverts
 **/
 rule noMint() {
-	env e;
-	calldataarg args;
-	mint(e, args);
-	assert(false);
+  env e;
+  calldataarg args;
+  mint@withrevert(e, args);
+  assert lastReverted;
+  //  assert(false);
 }
 
 /**
 * @title Proves that ghoAToken::burn always reverts
 **/
 rule noBurn() {
-	env e;
-	calldataarg args;
-	burn(e, args);
-	assert(false);
+  env e;
+  calldataarg args;
+  burn@withrevert(e, args);
+  assert lastReverted;
+  // assert(false);
 }
 
 /**
 * @title Proves that ghoAToken::transfer always reverts
 **/
 rule noTransfer() {
-	env e;
-	calldataarg args;
-	transfer(e, args);
-	assert(false);
+  env e;
+  calldataarg args;
+  transfer@withrevert(e, args);
+  assert lastReverted;
+  //  assert(false);
 }
 
 /** 
