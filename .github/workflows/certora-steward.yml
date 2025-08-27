@@ -41,7 +41,7 @@ jobs:
             certora/steward/conf/GhoBucketSteward.conf
             certora/steward/conf/GhoCcipSteward.conf
             certora/steward/conf/GhoGsmSteward.conf
-          solc-versions: 0.8.10
+          solc-versions: 0.8.20
           comment-fail-only: false
           solc-remove-version-prefix: "0."
           job-name: "Certora Prover Run"
@@ -49,3 +49,4 @@ jobs:
           install-java: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CERTORAKEY: ${{ secrets.CERTORAKEY }}
