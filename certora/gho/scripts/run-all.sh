@@ -12,7 +12,7 @@ certoraRun $CMN certora/gho/conf/verifyGhoToken.conf \
 
 echo
 echo "******** 3. Running:    ****************"
-certoraRun $CMN certora/gho/conf/verifyGhoAToken.conf --rule noMint noBurn noTransfer transferUnderlyingToCantExceedCapacity totalSupplyAlwaysZero userBalanceAlwaysZero level_does_not_decrease_after_transferUnderlyingTo_followed_by_handleRepayment \
+certoraRun $CMN certora/gho/conf/verifyGhoAToken.conf --rule must_revert must_NOT_revert transferUnderlyingToCantExceedCapacity totalSupplyAlwaysZero userBalanceAlwaysZero level_does_not_decrease_after_transferUnderlyingTo_followed_by_handleRepayment \
            --msg "3.  "
 
 echo
@@ -27,7 +27,7 @@ certoraRun $CMN certora/gho/conf/verifyFlashMinter.conf --rule balanceOfFlashMin
 
 echo
 echo "******** 6. Running:    ****************"
-certoraRun $CMN certora/gho/conf/verifyGhoVariableDebtToken.conf --rule user_index_after_mint user_index_ge_one_ray nonzeroNewDiscountToken \
+certoraRun $CMN certora/gho/conf/verifyGhoVariableDebtToken.conf --rule must_revert must_NOT_revert user_index_after_mint user_index_ge_one_ray nonzeroNewDiscountToken \
            --msg "6.  "
 
 echo
