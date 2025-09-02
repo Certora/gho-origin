@@ -1,6 +1,19 @@
+diff -ruN ../../src/contracts/facilitators/aave/tokens/GhoAToken.sol contracts/facilitators/aave/tokens/GhoAToken.sol
+--- ../../src/contracts/facilitators/aave/tokens/GhoAToken.sol	2025-09-02 13:46:32.089955680 +0300
++++ contracts/facilitators/aave/tokens/GhoAToken.sol	2025-09-02 14:20:18.194684213 +0300
+@@ -214,7 +214,8 @@
+ 
+   /// @inheritdoc IGhoAToken
+   function setVariableDebtToken(address ghoVariableDebtToken) external override onlyPoolAdmin {
+-    require(address(_ghoVariableDebtToken) == address(0), 'VARIABLE_DEBT_TOKEN_ALREADY_SET');
++    // We remove this require. Otherwise this function always reverts due to the static-linking of _ghoVariableDebtToken.
++    //require(address(_ghoVariableDebtToken) == address(0), 'VARIABLE_DEBT_TOKEN_ALREADY_SET'); 
+     require(ghoVariableDebtToken != address(0), 'ZERO_ADDRESS_NOT_VALID');
+     _ghoVariableDebtToken = GhoVariableDebtToken(ghoVariableDebtToken);
+     emit VariableDebtTokenSet(ghoVariableDebtToken);
 diff -ruN ../../src/contracts/gho/GhoToken.sol contracts/gho/GhoToken.sol
---- ../../src/contracts/gho/GhoToken.sol	2025-07-06 15:01:13.000000000 +0300
-+++ contracts/gho/GhoToken.sol	2025-07-23 12:11:37.173811676 +0300
+--- ../../src/contracts/gho/GhoToken.sol	2025-09-02 13:46:32.092957180 +0300
++++ contracts/gho/GhoToken.sol	2025-09-02 14:00:49.639613202 +0300
 @@ -4,7 +4,7 @@
  import {EnumerableSet} from 'src/contracts/dependencies/openzeppelin-contracts/contracts/utils/structs/EnumerableSet.sol';
  import {AccessControl} from 'src/contracts/dependencies/openzeppelin-contracts/contracts/access/AccessControl.sol';
@@ -65,8 +78,8 @@ diff -ruN ../../src/contracts/gho/GhoToken.sol contracts/gho/GhoToken.sol
    }
  }
 diff -ruN ../../src/contracts/gho/interfaces/IGhoToken.sol contracts/gho/interfaces/IGhoToken.sol
---- ../../src/contracts/gho/interfaces/IGhoToken.sol	2025-07-06 15:01:13.000000000 +0300
-+++ contracts/gho/interfaces/IGhoToken.sol	2025-07-23 12:11:37.173811676 +0300
+--- ../../src/contracts/gho/interfaces/IGhoToken.sol	2025-09-02 13:46:32.092957180 +0300
++++ contracts/gho/interfaces/IGhoToken.sol	2025-09-02 14:00:49.640613702 +0300
 @@ -13,6 +13,7 @@
      uint128 bucketCapacity;
      uint128 bucketLevel;
@@ -76,8 +89,8 @@ diff -ruN ../../src/contracts/gho/interfaces/IGhoToken.sol contracts/gho/interfa
  
    /**
 diff -ruN ../../src/contracts/gho/UpgradeableGhoToken.sol contracts/gho/UpgradeableGhoToken.sol
---- ../../src/contracts/gho/UpgradeableGhoToken.sol	2025-07-06 15:01:13.000000000 +0300
-+++ contracts/gho/UpgradeableGhoToken.sol	2025-07-23 12:11:37.174811677 +0300
+--- ../../src/contracts/gho/UpgradeableGhoToken.sol	2025-09-02 13:46:32.092957180 +0300
++++ contracts/gho/UpgradeableGhoToken.sol	2025-09-02 14:00:49.640613702 +0300
 @@ -5,7 +5,7 @@
  import {AccessControl} from 'src/contracts/dependencies/openzeppelin-contracts/contracts/access/AccessControl.sol';
  import {Initializable} from 'src/contracts/dependencies/solidity-utils/src/contracts/transparent-proxy/Initializable.sol';
@@ -143,7 +156,7 @@ diff -ruN ../../src/contracts/gho/UpgradeableGhoToken.sol contracts/gho/Upgradea
  }
 diff -ruN ../../src/.gitignore .gitignore
 --- ../../src/.gitignore	1970-01-01 02:00:00.000000000 +0200
-+++ .gitignore	2025-07-23 12:11:37.175811677 +0300
++++ .gitignore	2025-09-02 14:00:49.640613702 +0300
 @@ -0,0 +1,2 @@
 +*
 +!.gitignore
