@@ -128,23 +128,52 @@ function envAtTimestamp(uint256 ts) returns env {
 * @title at any point in time, the user's discount rate isn't larger than 100%
 **/
 invariant discountCantExceed100Percent(address user)
-	getUserDiscountRate(user) <= MAX_DISCOUNT()
-	{
-		preserved updateDiscountDistribution(address sender,address recipient,uint256 senderDiscountTokenBalance,uint256 recipientDiscountTokenBalance,uint256 amount) with (env e) {
-			require(indexAtTimestamp(e.block.timestamp) >= ray());
-		}
-	}
+  getUserDiscountRate(user) <= MAX_DISCOUNT()
+  filtered {f -> !is_reverting_func(f)}
+  {preserved updateDiscountDistribution(address sender,address recipient,uint256 senderDiscountTokenBalance,uint256 recipientDiscountTokenBalance,uint256 amount) with (env e) {
+      require(indexAtTimestamp(e.block.timestamp) >= ray());
+    }
+  }
     
 /**
 * @title at any point in time, the user's discount rate isn't larger than DISCOUNT_RATE
 **/
 invariant discountCantExceedDiscountRate(address user)
-	getUserDiscountRate(user) <= discStrategy.DISCOUNT_RATE()
-	{
-		preserved updateDiscountDistribution(address sender,address recipient,uint256 senderDiscountTokenBalance,uint256 recipientDiscountTokenBalance,uint256 amount) with (env e) {
-			require(indexAtTimestamp(e.block.timestamp) >= ray());
-		}
-	}
+  getUserDiscountRate(user) <= discStrategy.DISCOUNT_RATE()
+  filtered {f -> !is_reverting_func(f)}  
+{
+  preserved updateDiscountDistribution(address sender,address recipient,uint256 senderDiscountTokenBalance,uint256 recipientDiscountTokenBalance,uint256 amount) with (env e) {
+    require(indexAtTimestamp(e.block.timestamp) >= ray());
+  }
+}
+
+
+
+
+definition is_reverting_func(method f) returns bool =
+  f.selector == sig:approve(address,uint256).selector
+  || f.selector == sig:transfer(address,uint256).selector
+  || f.selector == sig:transferFrom(address,address,uint256).selector
+  || f.selector == sig:decreaseAllowance(address,uint256).selector
+  || f.selector == sig:increaseAllowance(address,uint256).selector
+  || f.selector == sig:allowance(address, address).selector
+  ;
+
+
+rule must_revert(method f) filtered {f -> is_reverting_func(f)} {
+  env e; calldataarg args;
+  f@withrevert(e, args);
+  assert lastReverted;
+}
+
+
+rule must_NOT_revert(method f) filtered {f -> !is_reverting_func(f)} {
+  env e; calldataarg args;
+  f(e, args);
+  satisfy true;
+}
+
+
 
 
 
@@ -161,24 +190,25 @@ rule nonzeroNewDiscountToken{
 // If a user's index has changed then it is assigned with the current pool index.
 // Assuming that the Pool calls mint() and burn() with its current index.
 invariant user_index_up_to_date(env e1, address user1)
-		scaledBalanceOf(e1, user1) != 0 => 
-		getUserCurrentIndex(user1) == indexAtTimestamp(e1.block.timestamp)
-		{
-        preserved mint(address user2, address onBehalfOf, uint256 amount, uint256 index) with (env e2)
-        {
-            require index == indexAtTimestamp(e2.block.timestamp); 
-            require e1.block.timestamp == e2.block.timestamp;
-        }
-        preserved  burn(address from, uint256 amount, uint256 index) with (env e3)
-        {
-            require index == indexAtTimestamp(e3.block.timestamp);
-            require e1.block.timestamp == e3.block.timestamp;
-        }
-		preserved with (env e4)
-        {
-            require e1.block.timestamp == e4.block.timestamp;
-        }
+  scaledBalanceOf(e1, user1) != 0 => 
+  getUserCurrentIndex(user1) == indexAtTimestamp(e1.block.timestamp)
+  filtered {f -> !is_reverting_func(f)}
+  {
+    preserved mint(address user2, address onBehalfOf, uint256 amount, uint256 index) with (env e2)
+    {
+      require index == indexAtTimestamp(e2.block.timestamp); 
+      require e1.block.timestamp == e2.block.timestamp;
     }
+    preserved  burn(address from, uint256 amount, uint256 index) with (env e3)
+    {
+      require index == indexAtTimestamp(e3.block.timestamp);
+      require e1.block.timestamp == e3.block.timestamp;
+    }
+    preserved with (env e4)
+    {
+      require e1.block.timestamp == e4.block.timestamp;
+    }
+  }
 
 // check user index after mint()
 rule user_index_after_mint
@@ -222,17 +252,18 @@ rule accumulated_interest_increase_after_mint
 
 // User index >= 1 ray for every user with positive balance 
 invariant user_index_ge_one_ray(env e1, address user1)
-		scaledBalanceOf(e1, user1) != 0 => ray() <=  getUserCurrentIndex(user1)
-		{
-        preserved mint(address user2, address onBehalfOf, uint256 amount, uint256 index) with (env e2)
-        {
-            require index >= ray(); //TODO: verify - the Pool calls mint() with index >= 1 ray
-        }
-        preserved  burn(address from, uint256 amount, uint256 index) with (env e3)
-        {
-            require index >= ray(); //TODO: verify - the Pool calls burn() with index >= 1 ray
-        }
+  scaledBalanceOf(e1, user1) != 0 => ray() <=  getUserCurrentIndex(user1)
+  filtered {f -> !is_reverting_func(f)}
+  {
+    preserved mint(address user2, address onBehalfOf, uint256 amount, uint256 index) with (env e2)
+    {
+      require index >= ray(); //TODO: verify - the Pool calls mint() with index >= 1 ray
     }
+    preserved  burn(address from, uint256 amount, uint256 index) with (env e3)
+    {
+      require index >= ray(); //TODO: verify - the Pool calls burn() with index >= 1 ray
+    }
+  }
 
 
 /**
@@ -263,75 +294,83 @@ use rule disallowedFunctionalities;
 * @title proves that the user's balance of debt token (as reported by GhoVariableDebtToken::balanceOf) can't increase by calling any external non-mint function.
 **/
 //pass
-rule nonMintFunctionCantIncreaseBalance(method f) filtered { f-> f.selector != sig:mint(address, address, uint256, uint256).selector } {
-	address user;
-	uint256 ts1;
-	uint256 ts2;
-	require(ts2 >= ts1);
-	// Forcing the index to be fixed (otherwise the rule times out). For non-fixed index replace `==` with `>=`
-	require((indexAtTimestamp(ts1) >= ray()) && 
-			(indexAtTimestamp(ts2) == indexAtTimestamp(ts1)));
-
-	require(getUserCurrentIndex(user) == indexAtTimestamp(ts1));
-	requireInvariant discountCantExceed100Percent(user);
-
-	env e = envAtTimestamp(ts2);
-	uint256 balanceBeforeOp = balanceOf(e, user);
-	calldataarg args;
-	f(e,args);
-	mathint balanceAfterOp = balanceOf(e, user);
-	mathint allowedDiff = indexAtTimestamp(ts2) / ray();
-	// assert(balanceAfterOp != balanceBeforeOp + allowedDiff + 1);
-	assert(balanceAfterOp <= balanceBeforeOp + allowedDiff);
+rule nonMintFunctionCantIncreaseBalance(method f) filtered {f ->
+    !is_reverting_func(f) &&
+    f.selector != sig:mint(address, address, uint256, uint256).selector
+    } {
+  address user;
+  uint256 ts1;
+  uint256 ts2;
+  require(ts2 >= ts1);
+  // Forcing the index to be fixed (otherwise the rule times out). For non-fixed index replace `==` with `>=`
+  require((indexAtTimestamp(ts1) >= ray()) && 
+          (indexAtTimestamp(ts2) == indexAtTimestamp(ts1)));
+  
+  require(getUserCurrentIndex(user) == indexAtTimestamp(ts1));
+  requireInvariant discountCantExceed100Percent(user);
+  
+  env e = envAtTimestamp(ts2);
+  uint256 balanceBeforeOp = balanceOf(e, user);
+  calldataarg args;
+  f(e,args);
+  mathint balanceAfterOp = balanceOf(e, user);
+  mathint allowedDiff = indexAtTimestamp(ts2) / ray();
+  // assert(balanceAfterOp != balanceBeforeOp + allowedDiff + 1);
+  assert(balanceAfterOp <= balanceBeforeOp + allowedDiff);
 }
 
 /**
 * @title proves that a call to a non-mint operation won't increase the user's balance of the actual debt tokens (i.e. it's scaled balance)
 **/
 // pass
-rule nonMintFunctionCantIncreaseScaledBalance(method f) filtered { f-> f.selector != sig:mint(address, address, uint256, uint256).selector } {
-	address user;
-	uint256 ts1;
-	uint256 ts2;
-	require(ts2 >= ts1);
-	require((indexAtTimestamp(ts1) >= ray()) && 
-			(indexAtTimestamp(ts2) >= indexAtTimestamp(ts1)));
-
-	require(getUserCurrentIndex(user) == indexAtTimestamp(ts1));
-	requireInvariant discountCantExceed100Percent(user);
-	uint256 balanceBeforeOp = scaledBalanceOf(user);
-	env e = envAtTimestamp(ts2);
-	calldataarg args;
-	f(e,args);
-	uint256 balanceAfterOp = scaledBalanceOf(user);
-	assert(balanceAfterOp <= balanceBeforeOp);
+rule nonMintFunctionCantIncreaseScaledBalance(method f) filtered { f->
+    !is_reverting_func(f) &&
+    f.selector != sig:mint(address, address, uint256, uint256).selector
+    } {
+  address user;
+  uint256 ts1;
+  uint256 ts2;
+  require(ts2 >= ts1);
+  require((indexAtTimestamp(ts1) >= ray()) && 
+          (indexAtTimestamp(ts2) >= indexAtTimestamp(ts1)));
+  
+  require(getUserCurrentIndex(user) == indexAtTimestamp(ts1));
+  requireInvariant discountCantExceed100Percent(user);
+  uint256 balanceBeforeOp = scaledBalanceOf(user);
+  env e = envAtTimestamp(ts2);
+  calldataarg args;
+  f(e,args);
+  uint256 balanceAfterOp = scaledBalanceOf(user);
+  assert(balanceAfterOp <= balanceBeforeOp);
 }
 
 /**
 * @title proves that debt tokens aren't transferable
 **/
 // pass
-rule debtTokenIsNotTransferable(method f) {
-	address user1;
-	address user2;
-	require(user1 != user2);
-	uint256 scaledBalanceBefore1 = scaledBalanceOf(user1);
-	uint256 scaledBalanceBefore2 = scaledBalanceOf(user2);
-	env e;
-	calldataarg args;
-	f(e,args);
-	uint256 scaledBalanceAfter1 = scaledBalanceOf(user1);
-	uint256 scaledBalanceAfter2 = scaledBalanceOf(user2);
+rule debtTokenIsNotTransferable(method f) filtered {f -> !is_reverting_func(f)} {
+  address user1;
+  address user2;
+  require(user1 != user2);
+  uint256 scaledBalanceBefore1 = scaledBalanceOf(user1);
+  uint256 scaledBalanceBefore2 = scaledBalanceOf(user2);
+  env e;
+  calldataarg args;
+  f(e,args);
+  uint256 scaledBalanceAfter1 = scaledBalanceOf(user1);
+  uint256 scaledBalanceAfter2 = scaledBalanceOf(user2);
 
-	assert( scaledBalanceBefore1 + scaledBalanceBefore2 == scaledBalanceAfter1 + scaledBalanceAfter2 
-	=> (scaledBalanceBefore1 == scaledBalanceAfter1 && scaledBalanceBefore2 == scaledBalanceAfter2));
+  assert( scaledBalanceBefore1 + scaledBalanceBefore2 == scaledBalanceAfter1 + scaledBalanceAfter2 
+          => (scaledBalanceBefore1 == scaledBalanceAfter1 && scaledBalanceBefore2 == scaledBalanceAfter2));
 }
 
 /**
 * @title proves that only burn/mint/rebalanceUserDiscountPercent/updateDiscountDistribution can modify user's scaled balance
 **/
 // pass
-rule onlyCertainFunctionsCanModifyScaledBalance(method f) {
+rule onlyCertainFunctionsCanModifyScaledBalance(method f) filtered {f ->
+    !is_reverting_func(f)
+    } {
 	address user;
 	uint256 ts1;
 	uint256 ts2;
@@ -357,40 +396,42 @@ rule onlyCertainFunctionsCanModifyScaledBalance(method f) {
 * @title proves that only a call to decreaseBalanceFromInterest will decrease the user's accumulated interest listing.
 **/
 // pass
-rule userAccumulatedDebtInterestWontDecrease(method f) {
-	address user;
-	uint256 ts1;
-	uint256 ts2;
-	require(ts2 >= ts1);
-	require((indexAtTimestamp(ts1) >= ray()) && 
-			(indexAtTimestamp(ts2) >= indexAtTimestamp(ts1)));
-
-	require(getUserCurrentIndex(user) == indexAtTimestamp(ts1));
-	requireInvariant discountCantExceed100Percent(user);
-	uint256 initAccumulatedInterest = getUserAccumulatedDebtInterest(user);
-	env e2 = envAtTimestamp(ts2);
-	calldataarg args;
-	f(e2,args);
-	uint256 finAccumulatedInterest = getUserAccumulatedDebtInterest(user);
-	assert(initAccumulatedInterest > finAccumulatedInterest => f.selector == sig:decreaseBalanceFromInterest(address, uint256).selector);
+rule userAccumulatedDebtInterestWontDecrease(method f) filtered {f ->
+    !is_reverting_func(f)
+    } {
+  address user;
+  uint256 ts1;
+  uint256 ts2;
+  require(ts2 >= ts1);
+  require((indexAtTimestamp(ts1) >= ray()) && 
+          (indexAtTimestamp(ts2) >= indexAtTimestamp(ts1)));
+  
+  require(getUserCurrentIndex(user) == indexAtTimestamp(ts1));
+  requireInvariant discountCantExceed100Percent(user);
+  uint256 initAccumulatedInterest = getUserAccumulatedDebtInterest(user);
+  env e2 = envAtTimestamp(ts2);
+  calldataarg args;
+  f(e2,args);
+  uint256 finAccumulatedInterest = getUserAccumulatedDebtInterest(user);
+  assert(initAccumulatedInterest > finAccumulatedInterest => f.selector == sig:decreaseBalanceFromInterest(address, uint256).selector);
 }
 
 /**
 * @title proves that a user can't nullify its debt without calling burn
 **/
 // pass
-rule userCantNullifyItsDebt(method f) {
-    address user;
-    env e;
-    env e2;
-	require(getUserCurrentIndex(user) == indexAtTimestamp(e.block.timestamp));
-	requireInvariant discountCantExceed100Percent(user);
-	uint256 balanceBeforeOp = balanceOf(e, user);
-	calldataarg args;
-    require e2.block.timestamp == e.block.timestamp;
-	f(e2,args);
-	uint256 balanceAfterOp = balanceOf(e, user);
-	assert((balanceBeforeOp > 0 && balanceAfterOp == 0) => (f.selector == sig:burn(address, uint256, uint256).selector));
+rule userCantNullifyItsDebt(method f) filtered {f -> !is_reverting_func(f) } {
+  address user;
+  env e;
+  env e2;
+  require(getUserCurrentIndex(user) == indexAtTimestamp(e.block.timestamp));
+  requireInvariant discountCantExceed100Percent(user);
+  uint256 balanceBeforeOp = balanceOf(e, user);
+  calldataarg args;
+  require e2.block.timestamp == e.block.timestamp;
+  f(e2,args);
+  uint256 balanceAfterOp = balanceOf(e, user);
+  assert((balanceBeforeOp > 0 && balanceAfterOp == 0) => (f.selector == sig:burn(address, uint256, uint256).selector));
 }
 
 /***************************************************************

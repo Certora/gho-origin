@@ -28,16 +28,15 @@ invariant allUsersRefreshAndAccrueCounterEqual()
     forall address user. accrue_called_counter[user] == refresh_called_counter[user];
 
 // accrue is always called before refresh
-rule accrueAlwaysCalleldBeforeRefresh(env e, method f) {
-    address user1;
-    requireInvariant allUsersRefreshAndAccrueCounterEqual();
-    // require (forall address user. (accrue_called_counter[user] == refresh_called_counter[user]));
+rule accrueAlwaysCalleldBeforeRefresh(env e, method f) filtered {f -> !is_reverting_func(f)} {
+  address user1;
+  requireInvariant allUsersRefreshAndAccrueCounterEqual();
 
-    calldataarg args;
-    // see comment in flipRefreshCalled
-    f(e, args);
+  calldataarg args;
+  // see comment in flipRefreshCalled
+  f(e, args);
 
-    assert refresh_called_counter[user1] == accrue_called_counter[user1], "Remember, with great power comes great responsibility.";
+  assert refresh_called_counter[user1] == accrue_called_counter[user1], "Remember, with great power comes great responsibility.";
 }
 
 // accrue is always called before refresh example
